@@ -19,10 +19,18 @@ class Authorizations extends AbstractBase
     ///登陆
     public function login()
     {
+        $request = $this->request();
         $rule = new Rules();
         $rule->add('account','account字段错误')->withRule(Rule::REQUIRED);
         $rule->add('password','password字段错误')->withRule(Rule::REQUIRED);
         $v = $this->validateParams($rule);
+        $username = $request->username;
+
+        filter_var($username, FILTER_VALIDATE_EMAIL) ?
+            $credenttails['email'] = $username :
+            $credenttails['phone'] = $username ;
+
+        $credenttails['password'] = $request->password;
         if(!$v->hasError()){
             $bean = new Bean($v->getRuleData());
             $model = new UserModel();

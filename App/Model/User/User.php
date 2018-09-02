@@ -14,7 +14,7 @@ use EasySwoole\Core\Utility\Random;
 
 class User extends Model
 {
-    protected $table = 'user_list';
+    protected $table = 'user';
 
     function register(Bean $bean)
     {
@@ -23,12 +23,12 @@ class User extends Model
 
     function delete(Bean $bean)
     {
-        return $this->dbConnector()->where('userId',$bean->getUserId())->delete($this->table);
+        return $this->dbConnector()->where('id_user',$bean->getUserId())->delete($this->table);
     }
 
     function update(Bean $bean,array $data)
     {
-        return $this->dbConnector()->where('userId',$bean->getUserId())->update($this->table,$data);
+        return $this->dbConnector()->where('id_user',$bean->getUserId())->update($this->table,$data);
     }
 
     function updateByAccount(Bean $bean,array $data)
@@ -38,7 +38,7 @@ class User extends Model
 
     function login(Bean $bean):?Bean
     {
-        $info = $this->dbConnector()->where('userId',$bean->getUserId())
+        $info = $this->dbConnector()->where('id_user',$bean->getUserId())
             ->where('password',$bean->getPassword())->get($this->table);
         if(empty($info)){
             $session = md5(time().Random::randStr(6));

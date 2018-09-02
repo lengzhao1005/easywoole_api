@@ -8,6 +8,7 @@
 
 return [
     'SERVER_NAME'=>"EasySwoole",
+    'ENV' => 'dev',
     'MAIN_SERVER'=>[
         'HOST'=>'0.0.0.0',
         'PORT'=>9501,
@@ -45,12 +46,41 @@ return [
         'PASSWORD'=>'secret',
         'DB_NAME'=>'test'
     ],
+    'database' => [
+        'driver'    => 'mysql',
+        'host'      => '127.0.0.1',
+        'database'  => 'test',
+        'username'  => 'homestead',
+        'password'  => 'secret',
+        'charset'   => 'utf8',
+        'collation' => 'utf8_general_ci',
+        'prefix'    => ''
+    ],
+    'REDIS' => [
+        'host' => '127.0.0.1', // redis主机地址
+        'port' => 6379, // 端口
+        'serialize' => false, // 是否序列化php变量
+        'dbName' => 0, // db名
+        'auth' => null, // 密码
+        'pool' => [
+            'min' => 5, // 最小连接数
+            'max' => 100 // 最大连接数
+        ],
+        'errorHandler' => function(){
+            return null;
+        } // 如果Redis重连失败，会判断errorHandler是否callable，如果是，则会调用，否则会抛出异常，请自行try
+    ],
     'POOL_MANAGER' => [
-        'App\Utility\MysqlPool2' => [
+/*        'App\Utility\MysqlPool2' => [
             'min' => 5,
             'max' => 100,
             'type' => 1
-        ]
-    ]
+        ],*/
+/*        'App\Utility\RedisPool' => [
+            'min' => 5,
+            'max' => 100,
+            'type' => 1
+        ]*/
+    ],
 
 ];

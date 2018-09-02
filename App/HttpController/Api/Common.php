@@ -10,7 +10,10 @@ namespace App\HttpController\Api;
 
 
 use App\Model\User\Bean;
+use App\Utility\Redis;
+use App\Utility\RedisPool;
 use App\Utility\SysConst;
+use EasySwoole\Core\Component\Pool\PoolManager;
 use EasySwoole\Core\Http\Message\Status;
 use EasySwoole\Core\Utility\Validate\Rule;
 use EasySwoole\Core\Utility\Validate\Rules;
@@ -65,4 +68,19 @@ class Common extends AbstractBase
             $this->writeJson(Status::CODE_BAD_REQUEST,null,$v->getErrorList()->first()->getMessage());
         }
     }
+
+    /*
+     * 需要测试协程连接池的请在easySwooleEvent.php取消协程连接池的注释
+     */
+    function test()
+    {
+        $redis = Redis::getInstance()->getRedis();
+
+        $res = $redis->set('1a','1',5);
+        var_dump($res);
+        var_dump($redis->get('1a'));
+
+        $this->response()->write('request over');
+    }
+
 }

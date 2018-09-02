@@ -9,7 +9,10 @@
 namespace App\HttpController\Api;
 
 use App\Model\User\Bean;
+use App\Utility\FormatResultErrors;
+use App\Utility\Redis;
 use App\Utility\SysConst;
+use EasySwoole\Core\Component\Pool\PoolManager;
 use EasySwoole\Core\Http\Message\Status;
 use \App\Model\User\User as UserModel;
 use EasySwoole\Core\Utility\Validate\Rule;
@@ -35,28 +38,65 @@ class User extends AbstractBase
             return false;
         }
     }*/
+    public function index()
+    {
+        $this->actionNotFound('index');
+    }
 
     function register()
     {
+        if($verfy_result = $this->verificationMethod('POST') !== true){
+            $this->returnJson($verfy_result);
+        }
         $rule = new Rules();
-        $rule->add('account','account字段错误')->withRule(Rule::REQUIRED);
+        $rule->add('name','name字段错误')->withRule(Rule::REQUIRED)
+            ->withRule(Rule::MIN_LEN,3)
+            ->withRule(Rule::MAX_LEN,60);
         $rule->add('password','password字段错误')->withRule(Rule::REQUIRED)
             ->withRule(Rule::MIN_LEN,6)
-            ->withRule(Rule::MAX_LEN,16);
+            ->withRule(Rule::MAX_LEN,30);
+        $rule->add('code','code字段错误')->withRule(Rule::REQUIRED);
+        $rule->add('verification_key','code字段错误')->withRule(Rule::REQUIRED);
+
         $v = $this->validateParams($rule);
         if(!$v->hasError()){
-            $bean = new Bean($v->getRuleData());
-            $model = new UserModel();
-            $ret = $model->register($bean);
-            if($ret){
-                $this->writeJson(Status::CODE_OK, [
-                    'userId'=>$ret
-                ],'注册成功');
+            $user_data['password'] = $this->request()->getRequestParam('password');
+            $username = $this->request()->getRequestParam('name');
+            $code = $this->request()->getRequestParam('code');
+
+            //获取缓存验证码
+            $key = $this->request()->getRequestParam('verification_key');
+            $hkey = $hkey = 'verify:'.$key;
+            $verify_code = Redis::getInstance()->hGet($hkey,$username);
+
+            if(!$verify_code){
+                return $this->returnJson(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
+            }
+            if(!hash_equals($verify_code, $code)){
+                return $this->returnJson(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
+            }
+
+
+            filter_var($username, FILTER_VALIDATE_EMAIL) ?
+                $user_data['emial'] = $username :
+                $user_data['phone'] = $username ;
+
+            //$bean = new Bean($user_data);
+            $user = \App\Model\User::create($user_data);
+            //$ret = $model->register($bean);
+            if($user){
+                $token = \App\Model\User::setToken($user);
+                return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], [
+                    'token' => $token,
+                ]);
             }else{
-                $this->writeJson(Status::CODE_BAD_REQUEST, null,'注册失败，账户可能已经存在');
+                return $this->returnJson(FormatResultErrors::CODE_MAP['USER.ALLREADY.EXITS']);
             }
         }else{
-            $this->writeJson(Status::CODE_BAD_REQUEST,null,$v->getErrorList()->first()->getMessage());
+            $this->returnJson([
+                'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],
+                'message' => $v->getErrorList()->first()->getMessage(),
+            ]);
         }
     }
     /*

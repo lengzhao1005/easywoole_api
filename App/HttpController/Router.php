@@ -19,11 +19,13 @@ class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
     function register(RouteCollector $routeCollector)
     {
         // 用户注册
-        $routeCollector->get('/api/users','/api/user/register');
+        $routeCollector->post('/api/users','/api/user/register');
+        //发送验证码
+        $routeCollector->post('/api/verificationCodes', '/api/verificationcodes/index');
         //第三方登录
-        $routeCollector->get('/api/socials/{social_type}/authorizations','/api/authorizations/sociallogin');
+        $routeCollector->post('/api/socials/{social_type}/authorizations    ','/api/authorizations/sociallogin');
         //登陆
-        $routeCollector->get('/api/authorizations', '/api/authorizations/login');
+        $routeCollector->post('/api/authorizations', '/api/authorizations/login');
 
 
     }

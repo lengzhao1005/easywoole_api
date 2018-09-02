@@ -13,18 +13,20 @@ use EasySwoole\Core\Component\Spl\SplBean;
 
 class Bean extends SplBean
 {
-    protected $userId;
-    protected $account;
+    protected $id_user;
+    protected $email;
+    protected $phone;
     protected $password;
-    protected $session;
-    protected $addTime;
+    protected $token;
+    protected $update_time;
+    protected $create_time;
 
     /**
      * @return mixed
      */
     public function getUserId()
     {
-        return $this->userId;
+        return $this->id_user;
     }
 
     /**
@@ -32,23 +34,39 @@ class Bean extends SplBean
      */
     public function setUserId($userId): void
     {
-        $this->userId = $userId;
+        $this->id_user = $userId;
     }
 
     /**
      * @return mixed
      */
-    public function getAccount()
+    public function getEmail()
     {
-        return $this->account;
+        return $this->email;
     }
 
     /**
-     * @param mixed $account
+     * @param mixed $email
      */
-    public function setAccount($account): void
+    public function setEmail($email): void
     {
-        $this->account = $account;
+        $this->email = $email;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPhone()
+    {
+        return $this->phone;
+    }
+
+    /**
+     * @param mixed $phone
+     */
+    public function setPhone($phone): void
+    {
+        $this->email = $phone;
     }
 
     /**
@@ -70,39 +88,35 @@ class Bean extends SplBean
     /**
      * @return mixed
      */
-    public function getSession()
+    public function getToken()
     {
-        return $this->session;
+        return $this->token;
     }
 
     /**
-     * @param mixed $session
+     * @param mixed $token
      */
-    public function setSession($session): void
+    public function setToken($token): void
     {
-        $this->session = $session;
+        $this->token = $token;
     }
 
     /**
-     * @return mixed
+     * @param mixed $create_time
      */
-    public function getAddTime()
+    public function setCreateTime($create_time): void
     {
-        return $this->addTime;
-    }
-
-    /**
-     * @param mixed $addTime
-     */
-    public function setAddTime($addTime): void
-    {
-        $this->addTime = $addTime;
+        $this->addTime = $create_time;
     }
 
     protected function initialize(): void
     {
-        if(empty($this->addTime)){
-            $this->addTime = time();
+        $time = date('Y-m-d H:i:s');
+        if(empty($this->create_time)){
+            $this->create_time = $time;
+        }
+        if(empty($this->update_time)){
+            $this->update_time = $time;
         }
         //默认md5是32 位，当从数据库中读出数据恢复为bean的时候，不对密码做md5
         if(strlen($this->password) == 32){
