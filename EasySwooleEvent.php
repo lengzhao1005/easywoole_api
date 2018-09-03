@@ -2,6 +2,7 @@
 
 namespace EasySwoole;
 
+use EasySwoole\Core\Swoole\EventHelper;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use \EasySwoole\Core\AbstractInterface\EventInterface;
 use \EasySwoole\Core\Swoole\ServerManager;
@@ -29,12 +30,61 @@ Class EasySwooleEvent implements EventInterface {
 
     public static function mainServerCreate(ServerManager $server,EventRegister $register): void
     {
-        // 数据库协程连接池
-        // @see https://www.easyswoole.com/Manual/2.x/Cn/_book/CoroutinePool/mysql_pool.html?h=pool
+        EventHelper::registerDefaultOnMessage($register,\App\Parser::class);
+
+        $register->add($register::onClose, function ($ser, $fd) {
+            var_dump('close_event:'.$fd);
+        });
+
+        // 自定义WS握手处理 可以实现在握手的时候 鉴定用户身份
+        // @see https://wiki.swoole.com/wiki/page/409.html
         // ------------------------------------------------------------------------------------------
-        /*if (version_compare(phpversion('swoole'), '2.1.0', '>=')) {
-            PoolManager::getInstance()->registerPool(MysqlPool2::class, 3, 10);
-        }*/
+        $register->add($register::onHandShake, function (\swoole_http_request $request, \swoole_http_response $response) {
+            if (isset($request->cookie['token'])) {
+                $token = $request->cookie['token'];
+                if ($token == '123') {
+                    // 如果取得 token 并且验证通过 则进入 ws rfc 规范中约定的验证过程
+                    if (!isset($request->header['sec-websocket-key'])) {
+                        // 需要 Sec-WebSocket-Key 如果没有拒绝握手
+                        var_dump('shake fai1 3');
+                        $response->end();
+                        return false;
+                    }
+                    if (0 === preg_match('#^[+/0-9A-Za-z]{21}[AQgw]==$#', $request->header['sec-websocket-key'])
+                        || 16 !== strlen(base64_decode($request->header['sec-websocket-key']))
+                    ) {
+                        //不接受握手
+                        var_dump('shake fai1 4');
+                        $response->end();
+                        return false;
+                    }
+
+                    $key     = base64_encode(sha1($request->header['sec-websocket-key'] . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11', true));
+                    $headers = array(
+                        'Upgrade'               => 'websocket',
+                        'Connection'            => 'Upgrade',
+                        'Sec-WebSocket-Accept'  => $key,
+                        'Sec-WebSocket-Version' => '13',
+                        'KeepAlive'             => 'off',
+                    );
+                    foreach ($headers as $key => $val) {
+                        $response->header($key, $val);
+                    }
+                    //接受握手  发送验证后的header   还需要101状态码以切换状态
+                    $response->status(101);
+                    var_dump('shake success at fd :' . $request->fd);
+                    $response->end();
+                } else {
+                    // 令牌不正确的情况 不接受握手
+                    var_dump('shake fail 2');
+                    $response->end();
+                }
+            } else {
+                // 没有携带令牌的情况 不接受握手
+                var_dump('shake fai1 1');
+                $response->end();
+            }
+        });
     }
 
     public static function onRequest(Request $request,Response $response): void

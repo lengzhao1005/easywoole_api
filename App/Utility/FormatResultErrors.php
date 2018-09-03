@@ -7,6 +7,7 @@ class FormatResultErrors
     const CODE_MAP = [
         'SUCCESS' => ['code' => '100', 'message' => 'success'],
         'SYS.ERR' => ['code' => '101', 'message' => '系统错误', ],
+        'TOKEN.INVALID' => ['code' => '102', 'message' => '无效的token', ],
 
 
         'FIELD.INVALID' => ['code' => '201', 'message' => '字段非法', ],
@@ -14,6 +15,7 @@ class FormatResultErrors
         'USERNAME.NOTNULL' => ['code' => '203', 'message' => '用户名不能为空', ],
         'USER.ALLREADY.EXITS' => ['code' => '204', 'message' => '用户已存在', ],
         'VERIFY.CODE.EXPIRED' => ['code' => '205', 'message' => '验证码已失效', ],
+        'AUTH.FAIL' => ['code' => '206', 'message' => '用户名或密码错误', ],
 
         'OUTMCHACCNTNO.REPEAT' => ['code' => '201', 'message' => '外部子商户号重复', ],
         'OUTMCHACCNTNO.INVALID' => ['code' => '202', 'message' => '外部子商户号非法', ],

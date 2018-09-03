@@ -78,20 +78,20 @@ class User extends AbstractBase
 
 
             filter_var($username, FILTER_VALIDATE_EMAIL) ?
-                $user_data['emial'] = $username :
+                $user_data['email'] = $username :
                 $user_data['phone'] = $username ;
 
-            //$bean = new Bean($user_data);
-            $user = \App\Model\User::create($user_data);
-            //$ret = $model->register($bean);
-            if($user){
-                $token = \App\Model\User::setToken($user);
-                return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], [
-                    'token' => $token,
-                ]);
-            }else{
+            try{
+                $user = \App\Model\User::create($user_data);
+            }catch (\Exception $e){
                 return $this->returnJson(FormatResultErrors::CODE_MAP['USER.ALLREADY.EXITS']);
             }
+
+            $token = \App\Model\User::setToken($user);
+            return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], [
+                'token' => $token,
+            ]);
+
         }else{
             $this->returnJson([
                 'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],

@@ -12,7 +12,7 @@ class Send
     protected $to;
     protected $content;
 
-    public function __construct(SendInterface $handle, $to)
+    public function __construct(SendInterface $handle)
     {
         $this->handle = $handle;
     }
@@ -37,13 +37,13 @@ class Send
         return $this->content;
     }
 
-    public function sendCode()
+    public function sendCode($to, $code)
     {
-        $this->handle->sendCode($this->to, $this->content);
+        return $this->handle->sendCode($to, $code);
     }
 
-    public function sendMessage()
+    public function sendMessage($to, $message)
     {
-        $this->handle->sendMessage($this->to, $this->content);
+        return $this->handle->sendMessage($to, $message);
     }
 }

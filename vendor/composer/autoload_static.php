@@ -43,6 +43,7 @@ class ComposerStaticInit41e77f808008a5e85cbc44e46dc4b843
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
             'PhpParser\\' => 10,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'O' => 
         array (
@@ -164,6 +165,10 @@ class ComposerStaticInit41e77f808008a5e85cbc44e46dc4b843
         'PhpParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
+        ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
         'Overtrue\\EasySms\\' => 
         array (

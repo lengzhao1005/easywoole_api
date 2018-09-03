@@ -18,7 +18,7 @@ class User extends  LaravelBaseModel
     const CREATED_AT = 'create_time';
     const UPDATED_AT = 'update_time';
     const PASSWORD_PREFIX = 'XINGYE_PASSWD';
-    const EXPIRED_SEC = '60*60*2';
+    const EXPIRED_SEC = 60*60*2;
 
 
     /**
@@ -30,6 +30,11 @@ class User extends  LaravelBaseModel
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = md5(self::PASSWORD_PREFIX.$value);
+    }
+
+    public static function getMD5Password($value)
+    {
+        return md5(self::PASSWORD_PREFIX.$value);
     }
 
     public static function setToken($user)

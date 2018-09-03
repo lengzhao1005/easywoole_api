@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2018/3/6
- * Time: 下午2:53
- */
 
 namespace App\Sock\Parser;
 

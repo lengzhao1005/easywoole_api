@@ -4,8 +4,11 @@ namespace App\HttpController\Api;
 
 use App\Utility\FormatResultErrors;
 use App\Utility\Redis;
+use App\Utility\SendCode\EmailSend;
+use App\Utility\SendCode\Send;
 use EasySwoole\Config;
 use EasySwoole\Core\Component\Pool\PoolManager;
+use EasySwoole\Core\Swoole\Task\TaskManager;
 use EasySwoole\Core\Utility\Random;
 
 class VerificationCodes extends AbstractBase
@@ -31,8 +34,17 @@ class VerificationCodes extends AbstractBase
 
         if (Config::getInstance()->getConf('ENV') === 'dev') {
             $code = '1234';
+
+            if(!empty($email)){
+                TaskManager::async(function () use($email, $code){
+                    $send = Send::getInstance(new EmailSend());
+                    $send->sendCode($email,$code);
+                });
+            }
+
         } else {
             $code = '1234';
+
            /* // 生成4位随机数，左侧补0
             $code = str_pad(\mt_rand(1,9999),4,0,STREAM_BUFFER_LINE);
 

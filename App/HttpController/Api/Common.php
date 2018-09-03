@@ -74,13 +74,7 @@ class Common extends AbstractBase
      */
     function test()
     {
-        $redis = Redis::getInstance()->getRedis();
 
-        $res = $redis->set('1a','1',5);
-        var_dump($res);
-        var_dump($redis->get('1a'));
-
-        $this->response()->write('request over');
     }
 
 }

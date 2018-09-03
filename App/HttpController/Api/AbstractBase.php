@@ -30,19 +30,7 @@ abstract class AbstractBase extends Controller
 
     protected function onRequest($action): ?bool
     {
-        /*$token = $this->request()->getCookieParams(SysConst::COOKIE_USER_SESSION_NAME);
-        $bean = new Bean([
-            'session'=>$token
-        ]);
-        $model = new UserModel();
-        $bean = $model->sessionExist($bean);
-        if($bean){
-            $this->who = $bean;
-            return true;
-        }else{
-            $this->writeJson(Status::CODE_UNAUTHORIZED,null,'权限验证失败');
-            return false;
-        }*/
+
         $trac_no = Helper::create_uuid();
         $request = $this->request();
         $request->withAttribute('trac_no', $trac_no);
