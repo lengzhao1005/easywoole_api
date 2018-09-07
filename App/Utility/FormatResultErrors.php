@@ -17,8 +17,10 @@ class FormatResultErrors
         'VERIFY.CODE.EXPIRED' => ['code' => '205', 'message' => '验证码已失效', ],
         'AUTH.FAIL' => ['code' => '206', 'message' => '用户名或密码错误', ],
 
-        'OUTMCHACCNTNO.REPEAT' => ['code' => '201', 'message' => '外部子商户号重复', ],
-        'OUTMCHACCNTNO.INVALID' => ['code' => '202', 'message' => '外部子商户号非法', ],
+        'SUBORDINATE.INVALID' => ['code' => '301', 'message' => 'subordinate非法', ],
+
+
+
         'MCHACCNTNO.NOTFOUND' => ['code' => '203', 'message' => '子商户帐号不存在', ],
         'SEND.OUTMCHACCNTNO.REPEAT' => ['code' => '204', 'message' => '请求数据中外部子商户号重复', ],
 

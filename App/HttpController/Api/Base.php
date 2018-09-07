@@ -34,7 +34,7 @@ class Base extends AbstractBase
             $this->returnJson(FormatResultErrors::CODE_MAP['TOKEN.INVALID']);
             return false;
         }
-
+        $token = \App\Model\User::refreshToken($token);
         $this->who = $user;
         return true;
     }

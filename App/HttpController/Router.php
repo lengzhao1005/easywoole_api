@@ -27,7 +27,12 @@ class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
         //登陆
         $routeCollector->post('/api/authorizations', '/api/authorizations/login');
 
-
+        //创建项目
+        $routeCollector->post('/api/projects', '/api/project/store');
+        //修改项目
+        $routeCollector->patch('/api/projects/{id_project}', '/api/project/update');
+        //删除项目
+        $routeCollector->delete('/api/projects/{id_project}', '/api/project/destory');
     }
 
 }

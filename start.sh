@@ -1,5 +1,5 @@
 #!/bin/bash
-DIR=$1
+DIR=./App
 
 if [ ! -n "$DIR" ] ;then
     echo "you have not choice Application directory !"
