@@ -8,33 +8,21 @@ class FormatResultErrors
         'SUCCESS' => ['code' => '100', 'message' => 'success'],
         'SYS.ERR' => ['code' => '101', 'message' => '系统错误', ],
         'TOKEN.INVALID' => ['code' => '102', 'message' => '无效的token', ],
-
+        'METHOD.NOTALLOW' => ['code' => '103', 'message' => '传输方式不被允许', ],
 
         'FIELD.INVALID' => ['code' => '201', 'message' => '字段非法', ],
-        'METHOD.NOTALLOW' => ['code' => '202', 'message' => '传输方式不被允许', ],
-        'USERNAME.NOTNULL' => ['code' => '203', 'message' => '用户名不能为空', ],
-        'USER.ALLREADY.EXITS' => ['code' => '204', 'message' => '用户已存在', ],
-        'VERIFY.CODE.EXPIRED' => ['code' => '205', 'message' => '验证码已失效', ],
-        'AUTH.FAIL' => ['code' => '206', 'message' => '用户名或密码错误', ],
+        'USERNAME.NOTNULL' => ['code' => '202', 'message' => '用户名不能为空', ],
+        'USER.ALLREADY.EXITS' => ['code' => '203', 'message' => '用户已存在', ],
+        'VERIFY.CODE.EXPIRED' => ['code' => '204', 'message' => '验证码已失效', ],
+        'AUTH.FAIL' => ['code' => '205', 'message' => '用户名或密码错误', ],
 
         'SUBORDINATE.INVALID' => ['code' => '301', 'message' => 'subordinate非法', ],
+        'PROJECT.NOTFOUND' => ['code' => '302', 'message' => '未找到项目', ],
 
+        'TASK.EMERGENCT.RANK.INVALID' => ['code' => '401', 'message' => '任务紧急度非法', ],
+        'TASK.EXPIRE.TIME.INVALID' => ['code' => '401', 'message' => '任务到期时间格式错误', ],
+        'SUBPROJECT.NOTFOUND' => ['code' => '401', 'message' => '未找到子项目项目', ],
+        'ID.USERS.NOTFOUND' => ['code' => '401', 'message' => '关联的用户未找到', ],
 
-
-        'MCHACCNTNO.NOTFOUND' => ['code' => '203', 'message' => '子商户帐号不存在', ],
-        'SEND.OUTMCHACCNTNO.REPEAT' => ['code' => '204', 'message' => '请求数据中外部子商户号重复', ],
-
-        'BANKCARD.REPEAT' =>  ['code' => '301', 'message' => '银行卡信息重复', ],
-        'BANKCARD.AUTH.FAIL' =>  ['code' => '302', 'message' => '银行卡信息认证失败', ],
-        'BINKCARD.NOTFOUND' =>  ['code' => '303', 'message' => '银行卡信息不存在', ],
-        'CARDNO.CANNONULL' =>  ['code' => '304', 'message' => '卡号不能为空', ],
-        'BINKCARD.ALLREADY.UNBING' =>  ['code' => '304', 'message' => '该银行卡已经解绑', ],
-
-        'BATCHCREATE.ACCNT.NUM.INVALID' =>  ['code' => '401', 'message' => '单次批量开设子商户数目非法', ],
-        'MCHSUB.BATCHCREATE.FAIL' =>  ['code' => '402', 'message' => '批量开设子商户失败', ],
-        'NUM.INVALID' =>  ['code' => '403', 'message' => '数目非法', ],
-        'MCHACCNT.WITHDARW.FAIL' =>  ['code' => '404', 'message' => '提现失败', ],
-        'DISPATCH.FAIL' =>  ['code' => '405', 'message' => '分账失败', ],
-        'DISPATCH.ORDER.INVALID' =>  ['code' => '406', 'message' => '分账失败，单号重复', ],
     ];
 }

@@ -24,6 +24,11 @@ class Project extends LaravelBaseModel
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'id_user', 'id_user_create');
+        return $this->belongsTo(User::class, 'id_user_create', 'id_user');
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'project_user', 'id_project', 'id_user');
     }
 }

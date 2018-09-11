@@ -14,12 +14,33 @@ class User extends  LaravelBaseModel
     public $fillable = [
         'email', 'phone', 'password', 'avatar', 'nickname', 'create_time', 'update_time'
     ];
+    public $hidden = ['token','password'];
 
     const CREATED_AT = 'create_time';
     const UPDATED_AT = 'update_time';
+    //密码密文前缀
     const PASSWORD_PREFIX = 'XINGYE_PASSWD';
+    //token过期时间
     const EXPIRED_SEC = 60*60*2;
 
+
+    /**
+     * 多对多关联项目表
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class,'project_user', 'id_user','id_project')->withTimestamps();
+    }
+
+    /**
+     * 多对多关联任务表
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function tasks()
+    {
+        return $this->belongsToMany(TaskUser::class,'task_user','id_user', 'id_task');
+    }
 
     /**
      * 设置密码
@@ -32,21 +53,36 @@ class User extends  LaravelBaseModel
         $this->attributes['password'] = md5(self::PASSWORD_PREFIX.$value);
     }
 
+    /**
+     * 获取密码密文
+     * @param $value
+     * @return string
+     */
     public static function getMD5Password($value)
     {
         return md5(self::PASSWORD_PREFIX.$value);
     }
 
+    /**
+     * 设置身份认证token
+     * @param $user
+     * @return string
+     */
     public static function setToken($user)
     {
         $token = md5($user->id_user.time().Random::randStr(6));
 
-        Redis::getInstance()->setex($token, self::EXPIRED_SEC, $user->id);
+        Redis::getInstance()->setex($token, self::EXPIRED_SEC, $user->id_user);
 
         return $token;
     }
 
-    public static function refreshToken($token)
+    /**
+     * 重置token过期时间
+     * @param $token
+     * @return mixed
+     */
+    public static function resetTokenExpiredTime($token)
     {
         $id_user = Redis::getInstance()->get($token);
         Redis::getInstance()->setex($token, self::EXPIRED_SEC, $id_user);
@@ -54,9 +90,15 @@ class User extends  LaravelBaseModel
         return $token;
     }
 
+    /**
+     * 认证token
+     * @param $token
+     * @return bool
+     */
     public static function authToken($token)
     {
         $id_user = Redis::getInstance()->get($token);
+
         if(!empty($id_user) && $user = self::find($id_user)){
             return $user;
         }

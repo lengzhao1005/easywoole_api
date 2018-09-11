@@ -16,18 +16,28 @@ use EasySwoole\Core\Swoole\Task\TaskManager;
 abstract class AbstractBase extends Controller
 {
 
-
+    /**
+     * 实现index方法
+     */
     function index()
     {
         // TODO: Implement index() method.
         $this->actionNotFound('index');
     }
 
+    /**
+     * @param $action
+     */
     protected function actionNotFound($action): void
     {
         $this->writeJson(Status::CODE_NOT_FOUND);
     }
 
+    /**
+     * 记录请求日志
+     * @param $action
+     * @return bool|null
+     */
     protected function onRequest($action): ?bool
     {
 
@@ -58,7 +68,7 @@ abstract class AbstractBase extends Controller
     }
 
     /**
-     * 公共返回方法
+     * 公共返回方法，记录返回日志
      * @param $format_result
      * @param array $data
      * @param string $trac_no

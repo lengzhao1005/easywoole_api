@@ -8,13 +8,11 @@
 
 namespace App\HttpController\Api;
 
-use App\Model\User\Bean;
 use App\Utility\FormatResultErrors;
 use App\Utility\Redis;
 use App\Utility\SysConst;
 use EasySwoole\Core\Component\Pool\PoolManager;
 use EasySwoole\Core\Http\Message\Status;
-use \App\Model\User\User as UserModel;
 use EasySwoole\Core\Utility\Validate\Rule;
 use EasySwoole\Core\Utility\Validate\Rules;
 
@@ -45,7 +43,7 @@ class User extends AbstractBase
 
     function register()
     {
-        if($verfy_result = $this->verificationMethod('POST') !== true){
+        if(($verfy_result = $this->verificationMethod('POST')) !== true){
             $this->returnJson($verfy_result);
         }
         $rule = new Rules();
@@ -89,22 +87,22 @@ class User extends AbstractBase
 
             $token = \App\Model\User::setToken($user);
             return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], [
-                'token' => $token,
+                'auth_token' => $token,
             ]);
 
         }else{
-            $this->returnJson([
+            return $this->returnJson([
                 'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],
                 'message' => $v->getErrorList()->first()->getMessage(),
             ]);
         }
     }
-    /*
-     * 测试url路径/api/user/info/index.html
-     * 测试前请执行登录
+
+    /**
+     * 获取登录用户信息
      */
     function info()
     {
-        $this->writeJson(Status::CODE_OK,$this->who->toArray());
+        return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], $this->who->toArray());
     }
 }

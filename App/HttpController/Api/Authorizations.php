@@ -17,27 +17,31 @@ class Authorizations extends AbstractBase
         $this->returnJson(['code'=>1, 'message'=>'32'],['dwe','dwed','dwed']);
     }
 
-    ///登陆
+    //登陆
     public function login()
     {
-        if($verfy_result = $this->verificationMethod('POST') !== true){
-            $this->returnJson($verfy_result);
+        //限制传输方式为post
+        if(($verfy_result = $this->verificationMethod('post')) !== true){
+            return $this->returnJson($verfy_result);
         }
 
+        //验证字段是否正合法
         $request = $this->request();
         $rule = new Rules();
         $rule->add('name','name字段错误')->withRule(Rule::REQUIRED);
         $rule->add('password','password字段错误')->withRule(Rule::REQUIRED);
         $v = $this->validateParams($rule);
 
-        if(!$v->hasError()){
+        if(!$v->hasError()){//合法
             $username = $request->getRequestParam('name');
             $credenttails['password'] = \App\Model\User::getMD5Password($request->getRequestParam('password'));
 
+            //判断用户名是邮箱还是手机号
             filter_var($username, FILTER_VALIDATE_EMAIL) ?
                 $credenttails['email'] = $username :
                 $credenttails['phone'] = $username ;
 
+            //查找用户是否存在
             if(!empty($credenttails['email'])){
                 $user = \App\Model\User::where('email', $credenttails['email'])
                                         ->where('password', $credenttails['password'])
@@ -47,6 +51,7 @@ class Authorizations extends AbstractBase
                     ->where('password', $credenttails['password'])
                     ->first();
             }
+            //窜在则获取用户token
             if(!empty($user)){
                 $token = \App\Model\User::setToken($user);
                 $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], [
@@ -56,7 +61,7 @@ class Authorizations extends AbstractBase
                 $this->returnJson(FormatResultErrors::CODE_MAP['AUTH.FAIL']);
             }
 
-        }else{
+        }else{//非法
             $this->returnJson([
                 'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],
                 'message' => $v->getErrorList()->first()->getMessage(),

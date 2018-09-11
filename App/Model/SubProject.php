@@ -16,6 +16,12 @@ class SubProject extends LaravelBaseModel
     const CREATED_AT = 'create_time';
     const UPDATED_AT = 'update_time';
 
+    const SUBORDINATE = [
+        'private',
+        'protected',
+        'public'
+    ];
+
     public function project()
     {
         return $this->belongsTo(Project::class,'id_project', 'project');
