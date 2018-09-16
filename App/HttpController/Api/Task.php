@@ -68,7 +68,6 @@ class Task extends Base
             }
 
             //判断项目是否存在
-
             $project = \App\Model\Project::find($id_project);
             if(empty($project)){
                 return $this->returnJson(FormatResultErrors::CODE_MAP['PROJECT.NOTFOUND']);

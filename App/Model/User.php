@@ -3,7 +3,6 @@
 namespace App\Model;
 
 
-use App\Utility\Helper;
 use App\Utility\Redis;
 use EasySwoole\Core\Utility\Random;
 
@@ -21,7 +20,7 @@ class User extends  LaravelBaseModel
     //密码密文前缀
     const PASSWORD_PREFIX = 'XINGYE_PASSWD';
     //token过期时间
-    const EXPIRED_SEC = 60*60*2;
+    const EXPIRED_SEC = 3600*2;
 
 
     /**
@@ -70,7 +69,7 @@ class User extends  LaravelBaseModel
      */
     public static function setToken($user)
     {
-        $token = md5($user->id_user.time().Random::randStr(6));
+        $token = md5($user->id_user.Random::randStr(6));
 
         Redis::getInstance()->setex($token, self::EXPIRED_SEC, $user->id_user);
 

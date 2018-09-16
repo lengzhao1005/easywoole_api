@@ -27,8 +27,13 @@
     var wsServer = 'ws://'+document.domain+':9501';
     var websocket = new WebSocket(wsServer);
     window.onload = function () {
+
         websocket.onopen = function (evt) {
             addLine("Connected to WebSocket server.");
+            websocket.send(JSON.stringify({
+                action:'who',
+                content:'123'
+            }));
         };
 
         websocket.onclose = function (evt) {
@@ -41,6 +46,14 @@
 
         websocket.onerror = function (evt, e) {
             addLine('Error occured: ' + evt.data);
+        };
+
+        websocket.onopen = function (evt) {
+            addLine("Connected to WebSocket server.");
+            websocket.send(JSON.stringify({
+                action:'who',
+                content:'123'
+            }));
         };
     };
     function addLine(data) {

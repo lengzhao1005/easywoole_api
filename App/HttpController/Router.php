@@ -41,7 +41,11 @@ class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
         //删除子项目
         $routeCollector->delete('/api/sub_projects/{id_project}', '/api/subproject/destory');
         //获取项目下的用户
-        $routeCollector->post('/api/project/{id_project}/users', '/api/project/getUsersByIdProject');
+        $routeCollector->get('/api/project/{id_project}/users', '/api/project/getUsersByIdProject');
+        //获取加入项目的code
+        $routeCollector->get('/api/project/{id_project}/joincode', '/api/project/getJoinProjectCode');
+        //加入项目
+        //$routeCollector->post();
 
         //创建任务
         $routeCollector->post('/api/tasks','/api/task/store');

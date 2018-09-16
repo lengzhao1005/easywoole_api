@@ -9,6 +9,7 @@
 namespace App\HttpController\WebSock;
 
 
+use App\Utility\Redis;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
 use EasySwoole\Core\Swoole\ServerManager;
 use EasySwoole\Core\Swoole\Task\TaskManager;
@@ -18,10 +19,17 @@ class Index extends Controller
 
     function index()
     {
+        $redis = Redis::getInstance();
+        $redis->hSet('1','2','2');
+        $redis->hSet('1','3','3');
+
+        var_dump($redis->hGetAll('1'));
+        var_dump($redis->hDel('1','2'));
+        var_dump($redis->hGetAll('1'));
         // TODO: Implement index() method.
         $content = file_get_contents(__DIR__.'/client.html');
         $this->response()->write($content);
-        $this->response()->setCookie('token','123',time()+3600);
+        //$this->response()->setCookie('token','123',time()+3600);
     }
 
     /*

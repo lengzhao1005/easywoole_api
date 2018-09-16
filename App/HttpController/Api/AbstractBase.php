@@ -6,7 +6,9 @@ use \App\Model\User\User as UserModel;
 use App\Model\User\Bean;
 use App\Utility\FormatResultErrors;
 use App\Utility\Helper;
+use App\Utility\Redis;
 use App\Utility\SysConst;
+use EasySwoole\Config;
 use EasySwoole\Core\Component\Logger;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
 use EasySwoole\Core\Http\Message\Status;
@@ -47,11 +49,51 @@ abstract class AbstractBase extends Controller
         //获取用户IP地址
         $ip = ServerManager::getInstance()->getServer()->connection_info($request->getSwooleRequest()->fd);
         //拼接一个简单的日志
-        $logStr = '('. $trac_no .') | '.$ip['remote_ip'] . ' | ' . $request->getUri() .' | '. $request->getHeader('user-agent')[0] . ' | '.\json_encode($this->request()->getRequestParam(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).PHP_EOL;
+        $key = $ip['remote_ip'] . ' | ' . $request->getUri() .' | '. $request->getHeader('user-agent')[0];
+        $logStr = '('. $trac_no .') | '. $key . ' | '.\json_encode($this->request()->getRequestParam(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).PHP_EOL;
 
         TaskManager::async(function () use ($logStr){
             logger::getInstance()->log($logStr,'runlog');
         });
+
+        //请求频率限制
+        if($this->requestLimit(md5($key))){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 请求频率限制
+     * @param $key
+     * @param string $limit_type
+     * @return bool
+     */
+    protected function requestLimit($key, $limit_type = 'rate_limits')
+    {
+        $config = Config::getInstance()->getConf($limit_type);
+        if(!empty($config) && $config['debug'] === false){
+            //获取redis单例
+            $redis = Redis::getInstance();
+            $check = $redis->exists($key);
+            if($check){
+                //自增
+                $redis->incr($key);
+                $count = $redis->get($key);
+                if($count > $config['access']['limit']){
+                    $this->response()->write(\json_encode([
+                        'code' => Status::CODE_GONE,
+                        'data'=>[],
+                        'message' => '请求频率超限'
+                    ], JSON_UNESCAPED_UNICODE));
+                    return false;
+                }
+            }else{
+                $redis->incr($key);
+                //限制时间为60秒
+                $redis->expire($key,$config['access']['expires']);
+            }
+        }
         return true;
     }
 

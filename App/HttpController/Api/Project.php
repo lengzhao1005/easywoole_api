@@ -89,12 +89,12 @@ class Project extends Base
     public function getUsersByIdProject()
     {
         //限制请求方式
-        if(($verfy_result = $this->verificationMethod('post')) !== true){
+        if(($verfy_result = $this->verificationMethod('get')) !== true){
             return $this->returnJson($verfy_result);
         }
         //建立验证规则
         $rule = new Rules();
-        $rule->add('id_project','id_project字段错误')->withRule(Rule::REQUIRED);
+        $rule->add('id_project','id_project不能为空')->withRule(Rule::REQUIRED);
         //执行验证
         $v = $this->validateParams($rule);
         if(!$v->hasError()){
@@ -120,8 +120,33 @@ class Project extends Base
         }
     }
 
-    public function getJoinProjectLink()
+    public function getJoinProjectCode()
     {
+        //限制请求方式
+        if(($verfy_result = $this->verificationMethod('get')) !== true){
+            return $this->returnJson($verfy_result);
+        }
+        //建立验证规则
+        $rule = new Rules();
+        $rule->add('id_project','id_project不能为空')->withRule(Rule::REQUIRED);
+        //执行验证
+        $v = $this->validateParams($rule);
+        if(!$v->hasError()){
+            $id_project = $this->request()->getRequestParam('id_project');
 
+            $project = \App\Model\Project::find($id_project);
+            if(empty($project)){
+                return $this->returnJson(FormatResultErrors::CODE_MAP['PROJECT.NOTFOUND']);
+            }
+
+            return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'],$project->getJoinCode());
+
+
+        }else{
+            return $this->returnJson([
+                'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],
+                'message' => $v->getErrorList()->first()->getMessage(),
+            ]);
+        }
     }
 }

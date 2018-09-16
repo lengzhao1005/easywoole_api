@@ -70,6 +70,7 @@ return [
             return null;
         } // 如果Redis重连失败，会判断errorHandler是否callable，如果是，则会调用，否则会抛出异常，请自行try
     ],
+    //连接池
     'POOL_MANAGER' => [
 /*        'App\Utility\MysqlPool2' => [
             'min' => 5,
@@ -81,6 +82,29 @@ return [
             'max' => 100,
             'type' => 1
         ]*/
+    ],
+    //base url
+    //'BASE_URL' => '192.168.10.10:9501/',
+
+    /**
+     * 接口频率限制
+     */
+    'rate_limits'=>[
+        'debug' => false,
+        //访问频率限制 秒/次数
+        'access'=>[
+            'expires'=> 60,
+            'limit'  => 60,
+        ],
+    ],
+    // 登录相关，次数/分钟
+    'auth_limits' => [
+        'debug' => false,
+        //访问频率限制 秒/次数
+        'access'=>[
+            'expires'=> 60,
+            'limit'  => 30,
+        ],
     ],
 
 ];
