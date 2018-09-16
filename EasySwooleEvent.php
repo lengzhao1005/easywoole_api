@@ -2,6 +2,7 @@
 
 namespace EasySwoole;
 
+use App\Model\Project;
 use App\Utility\SysConst;
 use EasySwoole\Core\Swoole\EventHelper;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -34,12 +35,21 @@ Class EasySwooleEvent implements EventInterface {
         EventHelper::registerDefaultOnMessage($register,\App\Parser::class);
 
         $register->add($register::onClose, function ($ser, $fd) {
-            var_dump('close_event:'.$fd);
+            if($id_user = Redis::getInstance()->get('fd:'.$fd)){
+                //在project房间中中加入用户
+                $id_projects = Redis::getInstance()->hGetAll(Project::USERPROJECTGREP.':'.$id_user);
+                if(!empty($id_projects) && is_array($id_projects)){
+                    foreach($id_projects as $id_project){
+                        Redis::getInstance()->hDel(Project::PROJECTROOM.':'.$id_project, $id_user);
+                    }
+                }
+            }
+            Redis::getInstance()->del('fd:'.$fd);
         });
 
-        $register->add($register::onOpen, function ($ser, $req) {
+        /*$register->add($register::onOpen, function ($ser, $req) {
             var_dump($req->fd);
-        });
+        });*/
 
         // 自定义WS握手处理 可以实现在握手的时候 鉴定用户身份
         // @see https://wiki.swoole.com/wiki/page/409.html
@@ -47,7 +57,8 @@ Class EasySwooleEvent implements EventInterface {
         $register->add($register::onHandShake, function (\swoole_http_request $request, \swoole_http_response $response) {
             if (isset($request->cookie[SysConst::COOKIE_USER_SESSION_NAME])) {
                 $token = $request->cookie['token'];
-                if ($token == '123') {
+
+                if ($id_user = Redis::getInstance()->get($token)) {
                     // 如果取得 token 并且验证通过 则进入 ws rfc 规范中约定的验证过程
                     if (!isset($request->header['sec-websocket-key'])) {
                         // 需要 Sec-WebSocket-Key 如果没有拒绝握手
@@ -75,6 +86,19 @@ Class EasySwooleEvent implements EventInterface {
                     foreach ($headers as $key => $val) {
                         $response->header($key, $val);
                     }
+
+                    //将fd与用户ID绑定
+                    Redis::getInstance()->set('fd:'.$request->fd, $id_user);
+
+                    //在project房间中中加入用户
+                    $id_projects = Redis::getInstance()->hGetAll(Project::USERPROJECTGREP.':'.$id_user);
+                    if(!empty($id_projects) && is_array($id_projects)){
+                        foreach($id_projects as $id_project){
+                            Redis::getInstance()->hset(Project::PROJECTROOM.':'.$id_project, $id_user, $request->fd);
+                        }
+                    }
+
+
                     //接受握手  发送验证后的header   还需要101状态码以切换状态
                     $response->status(101);
                     var_dump('shake success at fd :' . $request->fd);

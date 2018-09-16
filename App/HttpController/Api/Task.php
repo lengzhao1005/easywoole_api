@@ -92,7 +92,7 @@ class Task extends Base
 
             //创建任务
             $time = Carbon::now()->toDateTimeString();
-            $id_task = \App\Model\Task::insertGetId([
+            $insert_data = [
                 'title' => $task_title,
                 'content' => $task_content,
                 'emergency_rank' => $emergency_rank,
@@ -103,10 +103,14 @@ class Task extends Base
                 'id_user_create' => $this->who->id_user,
                 'create_time' => $time,
                 'update_time' => $time
-            ]);
-
+            ];
+            $id_task = \App\Model\Task::insertGetId($insert_data);
+            $insert_data['id_task'] => $id_task;
             //关联用户
             \App\Model\Task::find($id_task)->users()->sync($id_users);
+
+            //推送异步ws消息
+            \App\Model\Project::pushMsg($id_project, 'task', $insert_data);
 
             return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], [
                 'id_task' => $id_task,

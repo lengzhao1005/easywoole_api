@@ -24,6 +24,10 @@ class Project extends LaravelBaseModel
     const JOIN_PROJECT_PREFIX = 'JOIN_PROJECT';
     //加入项目缓存过去时间 1小时
     const JOIN_PROJECT_EXPIRE = 1*60*60;
+    //
+    const USERPROJECTGREP = 'user_project_grep';
+    //
+    const PROJECTROOM = 'project_room';
 
     const SUBORDINATE = [
         'private',
@@ -89,20 +93,44 @@ class Project extends LaravelBaseModel
      * @param string $id_project
      * @param string $id_user
      */
-    public static function setProjectUserList($id_project = '', $id_user = '')
+    public static function setUserProjectList($id_project = '', $id_user = '')
     {
         if(empty($id_project) || empty($id_user)){
             return ;
         }
 
         $redis = Redis::getInstance();
+
+        $redis->hSet(self::USERPROJECTGREP.':'.$id_user,$id_project,$id_project);
     }
 
     /**
      * 批量设置项目下的用户id队列
      */
-    public static function setBatchProjectUserList()
+    public static function setBatchUserProjectList()
     {
 
+    }
+
+
+    public static function pushMsg($id_project='', $type='', $data = [])
+    {
+        //异步推送任务ws
+        TaskManager::async(function () use ($id_project){
+            $fds = Redis::getInstance()->hGetAll(Project::PROJECTROOM.':'.$id_project);
+            if(!empty($fds) && is_array($fds)){
+                foreach($fds as $fd){
+                    $info = ServerManager::getInstance()->getServer()->connection_info($fd);
+                    if(is_array($info)){
+                        ServerManager::getInstance()->getServer()->push($fd, \json_encode([
+                            'type' => $type,
+                            'data' => $data,
+                        ]));
+                    }else{
+                        echo "fd {$fd} not exist";
+                    }
+                }
+            }
+        });
     }
 }
