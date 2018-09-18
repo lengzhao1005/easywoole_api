@@ -62,7 +62,7 @@ class Project extends LaravelBaseModel
         Redis::getInstance()->setex(self::JOIN_PROJECT_PREFIX.$code, self::JOIN_PROJECT_EXPIRE, $id_project);
 
         return [
-            'code' => $code,
+            'join_code' => $code,
             'expire_at' => Carbon::now()->addHour()->toDateTimeString(),
         ];
     }

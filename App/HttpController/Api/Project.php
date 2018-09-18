@@ -125,6 +125,9 @@ class Project extends Base
         }
     }
 
+    /**
+     * 获取加入项目的code
+     */
     public function getJoinProjectCode()
     {
         //限制请求方式
