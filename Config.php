@@ -61,7 +61,7 @@ return [
         'port' => 6379, // 端口
         'serialize' => false, // 是否序列化php变量
         'dbName' => 0, // db名
-        'auth' => null, // 密码
+        'auth' => 'huikewk', // 密码
         'pool' => [
             'min' => 5, // 最小连接数
             'max' => 100 // 最大连接数

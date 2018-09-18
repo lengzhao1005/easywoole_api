@@ -28,12 +28,12 @@ class Authorizations extends AbstractBase
         //验证字段是否正合法
         $request = $this->request();
         $rule = new Rules();
-        $rule->add('name','name字段错误')->withRule(Rule::REQUIRED);
+        $rule->add('username','username字段错误')->withRule(Rule::REQUIRED);
         $rule->add('password','password字段错误')->withRule(Rule::REQUIRED);
         $v = $this->validateParams($rule);
 
         if(!$v->hasError()){//合法
-            $username = $request->getRequestParam('name');
+            $username = $request->getRequestParam('username');
             $credenttails['password'] = \App\Model\User::getMD5Password($request->getRequestParam('password'));
 
             //判断用户名是邮箱还是手机号
@@ -55,7 +55,7 @@ class Authorizations extends AbstractBase
             if(!empty($user)){
                 $token = \App\Model\User::setToken($user);
                 $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], [
-                    'token' => $token,
+                    'auth_token' => $token,
                 ]);
             }else{
                 $this->returnJson(FormatResultErrors::CODE_MAP['AUTH.FAIL']);

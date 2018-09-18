@@ -21,7 +21,7 @@ class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
         // 用户注册
         $routeCollector->post('/api/users','/api/user/register');
         //发送验证码
-        $routeCollector->post('/api/verificationCodes', '/api/verificationcodes/index');
+        $routeCollector->post('/api/verificationCodes', '/api/verificationCodes/index');
         //第三方登录
         $routeCollector->post('/api/socials/{social_type}/authorizations    ','/api/authorizations/sociallogin');
         //登陆

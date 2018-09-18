@@ -34,7 +34,7 @@ class SubProject extends Base
         }
         //验证规则
         $rule = new Rules();
-        $rule->add('title','子项目标题不能为空')->withRule(Rule::REQUIRED)
+        $rule->add('name','子项目名称不能为空')->withRule(Rule::REQUIRED)
             ->withRule(Rule::MIN_LEN,3)
             ->withRule(Rule::MAX_LEN,100);
         $rule->add('subordinate','项目所用状态不能为空')->withRule(Rule::REQUIRED)

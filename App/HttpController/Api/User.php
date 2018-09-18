@@ -47,7 +47,7 @@ class User extends AbstractBase
             $this->returnJson($verfy_result);
         }
         $rule = new Rules();
-        $rule->add('name','name字段错误')->withRule(Rule::REQUIRED)
+        $rule->add('username','username')->withRule(Rule::REQUIRED)
             ->withRule(Rule::MIN_LEN,3)
             ->withRule(Rule::MAX_LEN,60);
         $rule->add('password','password字段错误')->withRule(Rule::REQUIRED)
@@ -59,7 +59,7 @@ class User extends AbstractBase
         $v = $this->validateParams($rule);
         if(!$v->hasError()){
             $user_data['password'] = $this->request()->getRequestParam('password');
-            $username = $this->request()->getRequestParam('name');
+            $username = $this->request()->getRequestParam('username');
             $code = $this->request()->getRequestParam('code');
 
             //获取缓存验证码
