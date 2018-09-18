@@ -51,6 +51,7 @@ class Authorizations extends AbstractBase
                     ->where('password', $credenttails['password'])
                     ->first();
             }
+
             //窜在则获取用户token
             if(!empty($user)){
                 $token = \App\Model\User::setToken($user);

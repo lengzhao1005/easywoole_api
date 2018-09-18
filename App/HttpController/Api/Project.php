@@ -106,7 +106,11 @@ class Project extends Base
                 return $this->returnJson(FormatResultErrors::CODE_MAP['PROJECT.NOTFOUND']);
             }
 
-            $users = $project->users()->get()->toArray();
+            $users = $project->users()->get()->map(function ($item){
+                unset($item['id_user']);
+                unset($item['pivot']);
+                return $item;
+            })->toArray();
 
             return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'],[
                 'users' => $users,
