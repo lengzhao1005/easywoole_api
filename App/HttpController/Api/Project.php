@@ -60,7 +60,7 @@ class Project extends Base
             //关联到中间表
             $this->who->projects()->attach($id_project);
             //设置user-projectproject
-            \App\Model\Project::setUserProjectList($id_project,$this->who->id_user);
+            \App\Model\ProjectUser::setUserProjectList($id_project,$this->who->id_user);
             //返回数据
             return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], [
                 'id_project' => $id_project,

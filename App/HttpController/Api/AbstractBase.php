@@ -74,7 +74,7 @@ abstract class AbstractBase extends Controller
         $config = Config::getInstance()->getConf($limit_type);
         if(!empty($config) && $config['debug'] === false){
             //获取redis单例
-            $redis = Redis::getInstance();
+            $redis = Redis::getInstance()->getRedis();
             $check = $redis->exists($key);
             if($check){
                 //自增
@@ -89,7 +89,7 @@ abstract class AbstractBase extends Controller
                     return false;
                 }
             }else{
-                $redis->incr($key);
+                $redis->set($key,1);
                 //限制时间为60秒
                 $redis->expire($key,$config['access']['expires']);
             }

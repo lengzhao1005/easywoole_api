@@ -105,12 +105,12 @@ class Task extends Base
                 'update_time' => $time
             ];
             $id_task = \App\Model\Task::insertGetId($insert_data);
-            $insert_data['id_task'] => $id_task;
+            $insert_data['id_task'] = $id_task;
             //关联用户
             \App\Model\Task::find($id_task)->users()->sync($id_users);
 
             //推送异步ws消息
-            \App\Model\Project::pushMsg($id_project, 'task', $insert_data);
+            \App\Model\ProjectUser::pushMsg($id_project, 'task', $insert_data);
 
             return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], [
                 'id_task' => $id_task,
@@ -122,5 +122,10 @@ class Task extends Base
                 'message' => $v->getErrorList()->first()->getMessage(),
             ]);
         }
+    }
+
+    public function getTaskList()
+    {
+
     }
 }
