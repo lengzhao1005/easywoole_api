@@ -50,8 +50,8 @@ return [
         'driver'    => 'mysql',
         'host'      => '127.0.0.1',
         'database'  => 'test',
-        'username'  => 'homestead',
-        'password'  => 'secret',
+        'username'  => 'marcus',
+        'password'  => 'zjYinZhun@asdhuez#4@(_9',
         'charset'   => 'utf8',
         'collation' => 'utf8_general_ci',
         'prefix'    => ''

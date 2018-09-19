@@ -43,7 +43,7 @@ class User extends Base
         $rule->add('password','password字段错误')->withRule(Rule::REQUIRED)
             ->withRule(Rule::MIN_LEN,6)
             ->withRule(Rule::MAX_LEN,30);
-        $rule->add('confirm_password','confirm_password字段错误')->withRule(Rule::REQUIRED)
+        $rule->add('password_confirm','password_confirm字段错误')->withRule(Rule::REQUIRED)
             ->withRule(Rule::MIN_LEN,6)
             ->withRule(Rule::MAX_LEN,30);
         /*$rule->add('code','code字段错误')->withRule(Rule::REQUIRED);
@@ -55,7 +55,7 @@ class User extends Base
             $user_data['email'] = $this->request()->getRequestParam('email');
             $user_data['phone'] = $this->request()->getRequestParam('phone');
             //$code = $this->request()->getRequestParam('code');
-            $confirm_password = $this->request()->getRequestParam('confirm_password');
+            $confirm_password = $this->request()->getRequestParam('password_confirm');
 
             if($user_data['password'] !== $confirm_password){
                 return $this->returnJson(FormatResultErrors::CODE_MAP['PASSWORD.NOT.SAME']);
@@ -79,6 +79,18 @@ class User extends Base
             if(!hash_equals($verify_code, $code)){
                 return $this->returnJson(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
             }*/
+
+           $user = \App\Model\User::where('email', $user_data['email'])->find();
+
+           if(!empty($user)){
+               return $this->returnJson(FormatResultErrors::CODE_MAP['USER.EMAIL.EXITS']);
+           }
+
+           $user = \App\Model\User::where('phone', $user_data['phone'])->find();
+
+            if(!empty($user)){
+                return $this->returnJson(FormatResultErrors::CODE_MAP['USER.PHONE.EXITS']);
+            }
 
             try{
                 $user = \App\Model\User::create($user_data);
