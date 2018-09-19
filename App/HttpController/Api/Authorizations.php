@@ -9,7 +9,7 @@ use App\Utility\SysConst;
 use EasySwoole\Core\Utility\Validate\Rule;
 use EasySwoole\Core\Utility\Validate\Rules;
 
-class Authorizations extends AbstractBase
+class Authorizations extends Base
 {
     //第三方登录
     public function socialLogin()
