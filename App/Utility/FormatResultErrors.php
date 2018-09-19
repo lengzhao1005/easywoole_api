@@ -15,6 +15,9 @@ class FormatResultErrors
         'USER.ALLREADY.EXITS' => ['code' => '203', 'message' => '用户已存在', ],
         'VERIFY.CODE.EXPIRED' => ['code' => '204', 'message' => '验证码已失效', ],
         'AUTH.FAIL' => ['code' => '205', 'message' => '用户名或密码错误', ],
+        'PASSWORD.NOT.SAME' => ['code' => '206', 'message' => '两次密码不一致', ],
+        'EMAIL.INVALID' => ['code' => '206', 'message' => '两次密码不一致', ],
+        'PHONE.INVALID' => ['code' => '206', 'message' => '两次密码不一致', ],
 
         'SUBORDINATE.INVALID' => ['code' => '301', 'message' => 'subordinate非法', ],
         'PROJECT.NOTFOUND' => ['code' => '302', 'message' => '未找到项目', ],

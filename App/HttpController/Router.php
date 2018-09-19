@@ -15,7 +15,6 @@ use FastRoute\RouteCollector;
 
 class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
 {
-
     function register(RouteCollector $routeCollector)
     {
         // 用户注册
@@ -56,6 +55,47 @@ class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
         $routeCollector->post('/api/tasks','/api/task/store');
         //获取用户下所用的项目
         $routeCollector->get('/api/tasks', '/api/project/getTasksByUid');
+
+
+        //==============================================跨域
+        // 用户注册
+        $routeCollector->get('/api/{cors}/users/register','/api/user/register');
+        //发送验证码
+        $routeCollector->get('/api/{cors}/verificationCodes', '/api/verificationCodes/index');
+        //第三方登录
+        $routeCollector->get('/api/{cors}/socials/{social_type}/authorizations    ','/api/authorizations/sociallogin');
+        //登陆
+        $routeCollector->get('/api/{cors}/users/login', '/api/authorizations/login');
+
+        //创建项目
+        $routeCollector->get('/api/{cors}/projects/create', '/api/project/store');
+        //修改项目
+        $routeCollector->get('/api/{cors}/projects/{id_project}/edit', '/api/project/update');
+        //删除项目
+        $routeCollector->get('/api/{cors}/projects/{id_project}/delete', '/api/project/destory');
+        //获取用户下所用的项目
+        $routeCollector->get('/api/{cors}/projects', '/api/project/getProjectsByUid');
+        //获取项目详情
+        $routeCollector->get('/api/{cors}/projects/{id_project}/tasks', '/api/project/getProjectsByUid');
+
+        //创建子项目
+        $routeCollector->get('/api/{cors}/sub_projects/create', '/api/subProject/store');
+        //修改子项目
+        $routeCollector->get('/api/{cors}/sub_projects/{id_project}/edit', '/api/subProject/update');
+        //删除子项目
+        $routeCollector->get('/api/{cors}/sub_projects/{id_project}/delete', '/api/subProject/destory');
+
+        //获取项目下的用户
+        $routeCollector->get('/api/{cors}/project/{id_project}/users', '/api/project/getUsersByIdProject');
+        //获取加入项目的code
+        $routeCollector->get('/api/{cors}/project/{id_project}/joincode', '/api/project/getJoinProjectCode');
+        //加入项目
+        //$routeCollector->post();
+
+        //创建任务
+        $routeCollector->get('/api/{cors}/tasks/create','/api/task/store');
+        //获取用户下所用的项目
+        $routeCollector->get('/api/{cors}/tasks', '/api/project/getTasksByUid');
     }
 
 }

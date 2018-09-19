@@ -96,7 +96,7 @@ class Base extends AbstractBase
         $ip = ServerManager::getInstance()->getServer()->connection_info($request->getSwooleRequest()->fd);
         //拼接一个简单的日志
         $key = $ip['remote_ip'] . ' | ' . $request->getUri() .' | '. $request->getHeader('user-agent')[0];
-        $logStr = '('. $trac_no .') | '. $key . ' | '.\json_encode($this->request()->getRequestParam(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).PHP_EOL;
+        $logStr = '('. $trac_no .') request_data| '. $key . ' | '.\json_encode($this->request()->getRequestParam(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).PHP_EOL;
 
         TaskManager::async(function () use ($logStr){
             logger::getInstance()->log($logStr,'runlog');
@@ -105,33 +105,51 @@ class Base extends AbstractBase
         return md5($key);
     }
 
-    protected function returnJsonCROS($format_result, $data = [])
+    /**
+     * 公共返回方法，记录返回日志
+     * @param $format_result
+     * @param array $data
+     * @param string $trac_no
+     */
+    protected function returnJson($format_result, $data = [])
     {
+
         if(empty($format_result) || !is_array($format_result)){
             $format_result = ['code'=> Status::CODE_INTERNAL_SERVER_ERROR, 'message' => 'unknow'];
         }
-
-        $request = $this->request();
-        $callback = $request->getAttribute('callback');
 
         $response_data = \json_encode(
             \array_merge(['data' => $data], $format_result),
             JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
         );
 
-
+        $request = $this->request();
         $trac_no = $request->getAttribute('trac_no');
+
+        $callback = $request->getRequestParam('callback');
+
+        $cors = $request->getRequestParam('cors');
+
         //拼接一个简单的日志
         $logStr = '('. $trac_no .') | ' . $callback . '(), response_data: '.$response_data.PHP_EOL;
         TaskManager::async(function () use ($logStr){
             logger::getInstance()->log($logStr,'runlog');
         });
 
-        $ret = $callback . '('. $response_data .')';
+        //跨域
+        if($cors){
 
-        $this->response()->write($ret);
+            TaskManager::async(function () use ($logStr){
+                logger::getInstance()->log($logStr,'runlog');
+            });
+
+            $ret = $callback . '('. $response_data .')';
+
+            return $this->response()->write($ret);
+        }
+
+        return $this->response()->write($response_data);
     }
-
 
     /**
      * 请求频率限制
@@ -173,37 +191,10 @@ class Base extends AbstractBase
      */
     protected function verificationMethod($method)
     {
-        if(strtoupper($this->request()->getMethod()) !== strtoupper($method)){
+        return true;
+        /*if(strtoupper($this->request()->getMethod()) !== strtoupper($method)){
             return FormatResultErrors::CODE_MAP['METHOD.NOTALLOW'];
         }
-        return true;
-    }
-
-    /**
-     * 公共返回方法，记录返回日志
-     * @param $format_result
-     * @param array $data
-     * @param string $trac_no
-     */
-    protected function returnJson($format_result, $data = [])
-    {
-        if(empty($format_result) || !is_array($format_result)){
-            $format_result = ['code'=> Status::CODE_INTERNAL_SERVER_ERROR, 'message' => 'unknow'];
-        }
-
-        $response_data = \json_encode(
-            \array_merge(['data' => $data], $format_result),
-            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-        );
-
-        $request = $this->request();
-        $trac_no = $request->getAttribute('trac_no');
-        //拼接一个简单的日志
-        $logStr = '('. $trac_no .') | '.$response_data.PHP_EOL;
-        TaskManager::async(function () use ($logStr){
-            logger::getInstance()->log($logStr,'runlog');
-        });
-
-        $this->response()->write($response_data);
+        return true;*/
     }
 }

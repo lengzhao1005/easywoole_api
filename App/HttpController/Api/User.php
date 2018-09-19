@@ -30,55 +30,69 @@ class User extends Base
 
     public function register()
     {
-        if(($verfy_result = $this->verificationMethod('POST')) !== true){
+        /*if(($verfy_result = $this->verificationMethod('POST')) !== true){
             $this->returnJsonCROS($verfy_result);
-        }
+        }*/
         $rule = new Rules();
-        $rule->add('username','username字段错误')->withRule(Rule::REQUIRED)
+        $rule->add('email','email字段错误')->withRule(Rule::REQUIRED)
+            ->withRule(Rule::MIN_LEN,3)
+            ->withRule(Rule::MAX_LEN,60);
+        $rule->add('phone','phone字段错误')->withRule(Rule::REQUIRED)
             ->withRule(Rule::MIN_LEN,3)
             ->withRule(Rule::MAX_LEN,60);
         $rule->add('password','password字段错误')->withRule(Rule::REQUIRED)
             ->withRule(Rule::MIN_LEN,6)
             ->withRule(Rule::MAX_LEN,30);
-        $rule->add('code','code字段错误')->withRule(Rule::REQUIRED);
-        $rule->add('verification_key','code字段错误')->withRule(Rule::REQUIRED);
+        $rule->add('confirm_password','confirm_password字段错误')->withRule(Rule::REQUIRED)
+            ->withRule(Rule::MIN_LEN,6)
+            ->withRule(Rule::MAX_LEN,30);
+        /*$rule->add('code','code字段错误')->withRule(Rule::REQUIRED);
+        $rule->add('verification_key','code字段错误')->withRule(Rule::REQUIRED);*/
 
         $v = $this->validateParams($rule);
         if(!$v->hasError()){
             $user_data['password'] = $this->request()->getRequestParam('password');
-            $username = $this->request()->getRequestParam('username');
-            $code = $this->request()->getRequestParam('code');
+            $user_data['email'] = $this->request()->getRequestParam('email');
+            $user_data['phone'] = $this->request()->getRequestParam('phone');
+            //$code = $this->request()->getRequestParam('code');
+            $confirm_password = $this->request()->getRequestParam('confirm_password');
 
-            //获取缓存验证码
-            $key = $this->request()->getRequestParam('verification_key');
+            if($user_data['password'] !== $confirm_password){
+                return $this->returnJson(FormatResultErrors::CODE_MAP['PASSWORD.NOT.SAME']);
+            }
+
+            if(!preg_match("/\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/",$user_data['email'])){
+                return $this->returnJson(FormatResultErrors::CODE_MAP['EMAIL.INVALID']);
+            }
+
+            if(!preg_match("/^1[34578]\d{9}$/",$user_data['phone'])){
+                return $this->returnJson(FormatResultErrors::CODE_MAP['PHONE.INVALID']);
+            }
+                //获取缓存验证码
+           /* $key = $this->request()->getRequestParam('verification_key');
             $hkey = $hkey = 'verify:'.$key;
             $verify_code = Redis::getInstance()->hGet($hkey,$username);
 
             if(!$verify_code){
-                return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
+                return $this->returnJson(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
             }
             if(!hash_equals($verify_code, $code)){
-                return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
-            }
-
-
-            filter_var($username, FILTER_VALIDATE_EMAIL) ?
-                $user_data['email'] = $username :
-                $user_data['phone'] = $username ;
+                return $this->returnJson(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
+            }*/
 
             try{
                 $user = \App\Model\User::create($user_data);
             }catch (\Exception $e){
-                return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['USER.ALLREADY.EXITS']);
+                return $this->returnJson(FormatResultErrors::CODE_MAP['USER.ALLREADY.EXITS']);
             }
 
             $token = \App\Model\User::setToken($user);
-            return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['SUCCESS'], [
+            return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], [
                 'auth_token' => $token,
             ]);
 
         }else{
-            return $this->returnJsonCROS([
+            return $this->returnJson([
                 'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],
                 'message' => $v->getErrorList()->first()->getMessage(),
             ]);
@@ -90,6 +104,6 @@ class User extends Base
      */
     function info()
     {
-        return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['SUCCESS'], $this->who->toArray());
+        return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], $this->who->toArray());
     }
 }
