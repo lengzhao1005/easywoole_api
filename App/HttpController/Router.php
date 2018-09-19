@@ -33,13 +33,18 @@ class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
         $routeCollector->patch('/api/projects/{id_project}', '/api/project/update');
         //删除项目
         $routeCollector->delete('/api/projects/{id_project}', '/api/project/destory');
+        //获取用户下所用的项目
+        $routeCollector->get('/api/projects', '/api/project/getProjectsByUid');
+        //获取项目详情
+        $routeCollector->get('/api/projects/{id_project}/tasks', '/api/project/getProjectsByUid');
 
         //创建子项目
-        $routeCollector->post('/api/sub_projects', '/api/subproject/store');
+        $routeCollector->post('/api/sub_projects', '/api/subProject/store');
         //修改子项目
-        $routeCollector->patch('/api/sub_projects/{id_project}', '/api/subproject/update');
+        $routeCollector->patch('/api/sub_projects/{id_project}', '/api/subProject/update');
         //删除子项目
-        $routeCollector->delete('/api/sub_projects/{id_project}', '/api/subproject/destory');
+        $routeCollector->delete('/api/sub_projects/{id_project}', '/api/subProject/destory');
+
         //获取项目下的用户
         $routeCollector->get('/api/project/{id_project}/users', '/api/project/getUsersByIdProject');
         //获取加入项目的code
@@ -49,6 +54,8 @@ class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
 
         //创建任务
         $routeCollector->post('/api/tasks','/api/task/store');
+        //获取用户下所用的项目
+        $routeCollector->get('/api/tasks', '/api/project/getTasksByUid');
     }
 
 }

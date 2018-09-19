@@ -124,8 +124,19 @@ class Task extends Base
         }
     }
 
-    public function getTaskList()
+    public function getTasksByUid()
     {
+        //限制请求方式
+        if(($verfy_result = $this->verificationMethod('get')) !== true){
+            return $this->returnJson($verfy_result);
+        }
 
+        $page = $this->request()->getRequestParam('page')??1;
+        $pre_page = $this->request()->getRequestParam('pre_page')??6;
+
+        $projects = $this->who->tasks()->paginate($pre_page)->toArray();
+
+
+        return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'],$projects);
     }
 }

@@ -16,7 +16,7 @@ use EasySwoole\Core\Http\Message\Status;
 use EasySwoole\Core\Utility\Validate\Rule;
 use EasySwoole\Core\Utility\Validate\Rules;
 
-class User extends AbstractBase
+class User extends Base
 {
 /*    //onRequest返回false的时候，为拦截请求，不再往下执行方法
     protected $who;
@@ -41,10 +41,10 @@ class User extends AbstractBase
         $this->actionNotFound('index');
     }
 
-    function register()
+    public function register()
     {
         if(($verfy_result = $this->verificationMethod('POST')) !== true){
-            $this->returnJson($verfy_result);
+            $this->returnJsonCROS($verfy_result);
         }
         $rule = new Rules();
         $rule->add('username','username')->withRule(Rule::REQUIRED)
@@ -68,10 +68,10 @@ class User extends AbstractBase
             $verify_code = Redis::getInstance()->hGet($hkey,$username);
 
             if(!$verify_code){
-                return $this->returnJson(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
+                return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
             }
             if(!hash_equals($verify_code, $code)){
-                return $this->returnJson(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
+                return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
             }
 
 
@@ -82,16 +82,16 @@ class User extends AbstractBase
             try{
                 $user = \App\Model\User::create($user_data);
             }catch (\Exception $e){
-                return $this->returnJson(FormatResultErrors::CODE_MAP['USER.ALLREADY.EXITS']);
+                return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['USER.ALLREADY.EXITS']);
             }
 
             $token = \App\Model\User::setToken($user);
-            return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], [
+            return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['SUCCESS'], [
                 'auth_token' => $token,
             ]);
 
         }else{
-            return $this->returnJson([
+            return $this->returnJsonCROS([
                 'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],
                 'message' => $v->getErrorList()->first()->getMessage(),
             ]);
@@ -103,6 +103,6 @@ class User extends AbstractBase
      */
     function info()
     {
-        return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], $this->who->toArray());
+        return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['SUCCESS'], $this->who->toArray());
     }
 }

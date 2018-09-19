@@ -12,7 +12,7 @@ use EasySwoole\Core\Swoole\Task\TaskManager;
 use EasySwoole\Core\Utility\Random;
 use Overtrue\EasySms\EasySms;
 
-class VerificationCodes extends AbstractBase
+class VerificationCodes extends Base
 {
     //code保存时间/s
     const EXPIRED_SEC = 300;

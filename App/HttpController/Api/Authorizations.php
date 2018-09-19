@@ -22,7 +22,7 @@ class Authorizations extends AbstractBase
     {
         //限制传输方式为post
         if(($verfy_result = $this->verificationMethod('post')) !== true){
-            return $this->returnJson($verfy_result);
+            return $this->returnJsonCROS($verfy_result);
         }
 
         //验证字段是否正合法
@@ -55,15 +55,15 @@ class Authorizations extends AbstractBase
             //窜在则获取用户token
             if(!empty($user)){
                 $token = \App\Model\User::setToken($user);
-                $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], [
+                $this->returnJsonCROS(FormatResultErrors::CODE_MAP['SUCCESS'], [
                     'auth_token' => $token,
                 ]);
             }else{
-                $this->returnJson(FormatResultErrors::CODE_MAP['AUTH.FAIL']);
+                $this->returnJsonCROS(FormatResultErrors::CODE_MAP['AUTH.FAIL']);
             }
 
         }else{//非法
-            $this->returnJson([
+            $this->returnJsonCROS([
                 'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],
                 'message' => $v->getErrorList()->first()->getMessage(),
             ]);
