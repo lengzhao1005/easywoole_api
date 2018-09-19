@@ -18,7 +18,7 @@ use EasySwoole\Core\Utility\Validate\Rules;
 class Project extends Base
 {
     protected $_auth_rules = [
-        'token' => ['store', '']
+        'token' => ['store', 'update', 'destory', 'getUsersByIdProject', 'getJoinProjectCode', 'getProjectsByUid']
     ];
 
     /**
@@ -28,7 +28,7 @@ class Project extends Base
     {
         //限制请求方式
         if(($verfy_result = $this->verificationMethod('POST')) !== true){
-            $this->returnJsonCROS($verfy_result);
+            $this->returnJson($verfy_result);
         }
         //建立验证规则
         $rule = new Rules();
@@ -45,7 +45,7 @@ class Project extends Base
             $subordinate = $this->request()->getRequestParam('subordinate');
 
             if(!in_array($subordinate, \App\Model\Project::SUBORDINATE)){
-                return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['SUBORDINATE.INVALID']);
+                return $this->returnJson(FormatResultErrors::CODE_MAP['SUBORDINATE.INVALID']);
             }
             //创建任务
             $time = Carbon::now()->toDateTimeString();
@@ -61,12 +61,12 @@ class Project extends Base
             //设置user-projectproject
             \App\Model\ProjectUser::setUserProjectList($id_project,$this->who->id_user);
             //返回数据
-            return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['SUCCESS'], [
+            return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], [
                 'id_project' => $id_project,
             ]);
 
         }else{
-            return $this->returnJsonCROS([
+            return $this->returnJson([
                 'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],
                 'message' => $v->getErrorList()->first()->getMessage(),
             ]);
@@ -90,7 +90,7 @@ class Project extends Base
     {
         //限制请求方式
         if(($verfy_result = $this->verificationMethod('get')) !== true){
-            return $this->returnJsonCROS($verfy_result);
+            return $this->returnJson($verfy_result);
         }
         //建立验证规则
         $rule = new Rules();
@@ -102,7 +102,7 @@ class Project extends Base
 
             $project = \App\Model\Project::find($id_project);
             if(empty($project)){
-                return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['PROJECT.NOTFOUND']);
+                return $this->returnJson(FormatResultErrors::CODE_MAP['PROJECT.NOTFOUND']);
             }
 
             $users = $project->users()->get()->map(function ($item){
@@ -111,13 +111,13 @@ class Project extends Base
                 return $item;
             })->toArray();
 
-            return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['SUCCESS'],[
+            return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'],[
                 'users' => $users,
             ]);
 
 
         }else{
-            return $this->returnJsonCROS([
+            return $this->returnJson([
                 'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],
                 'message' => $v->getErrorList()->first()->getMessage(),
             ]);
@@ -131,7 +131,7 @@ class Project extends Base
     {
         //限制请求方式
         if(($verfy_result = $this->verificationMethod('get')) !== true){
-            return $this->returnJsonCROS($verfy_result);
+            return $this->returnJson($verfy_result);
         }
         //建立验证规则
         $rule = new Rules();
@@ -143,14 +143,14 @@ class Project extends Base
 
             $project = \App\Model\Project::find($id_project);
             if(empty($project)){
-                return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['PROJECT.NOTFOUND']);
+                return $this->returnJson(FormatResultErrors::CODE_MAP['PROJECT.NOTFOUND']);
             }
 
-            return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['SUCCESS'],$project->getJoinCode());
+            return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'],$project->getJoinCode());
 
 
         }else{
-            return $this->returnJsonCROS([
+            return $this->returnJson([
                 'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],
                 'message' => $v->getErrorList()->first()->getMessage(),
             ]);
@@ -161,7 +161,7 @@ class Project extends Base
     {
         //限制请求方式
         if(($verfy_result = $this->verificationMethod('get')) !== true){
-            return $this->returnJsonCROS($verfy_result);
+            return $this->returnJson($verfy_result);
         }
 
         $page = $this->request()->getRequestParam('page')??1;
@@ -170,7 +170,7 @@ class Project extends Base
         $projects = $this->who->projects()->paginate($pre_page)->toArray();
 
 
-        return $this->returnJsonCROS(FormatResultErrors::CODE_MAP['SUCCESS'],$projects);
+        return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'],$projects);
     }
 
 }

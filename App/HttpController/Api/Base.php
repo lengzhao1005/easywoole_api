@@ -23,7 +23,7 @@ class Base extends AbstractBase
     public function getIsAuthRuleMode($mode, $action)
     {
         if (isset($this->_auth_rules[$mode])) {
-            return in_array($action, $this->_auth_rules[$mode][$action]);
+            return in_array($action, $this->_auth_rules[$mode]);
         }
         return false;
     }
@@ -46,14 +46,14 @@ class Base extends AbstractBase
 
             //验证token
             if (empty($token)) {
-                $this->returnJsonCROS(FormatResultErrors::CODE_MAP['TOKEN.INVALID']);
+                $this->returnJson(FormatResultErrors::CODE_MAP['TOKEN.INVALID']);
                 return false;
             }
 
             $user = User::authToken($token);
 
             if (!$user) {
-                $this->returnJsonCROS(FormatResultErrors::CODE_MAP['TOKEN.INVALID']);
+                $this->returnJson(FormatResultErrors::CODE_MAP['TOKEN.INVALID']);
                 return false;
             }
             //自动刷新token过期时间

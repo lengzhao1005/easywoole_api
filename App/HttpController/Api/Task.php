@@ -17,6 +17,10 @@ use EasySwoole\Core\Utility\Validate\Rules;
 
 class Task extends Base
 {
+
+    protected $_auth_rules = [
+        'token' => ['store', 'getTasksByUid']
+    ];
     /**
      * 添加任务
      */

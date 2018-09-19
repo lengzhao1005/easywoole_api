@@ -18,24 +18,11 @@ use EasySwoole\Core\Utility\Validate\Rules;
 
 class User extends Base
 {
-/*    //onRequest返回false的时候，为拦截请求，不再往下执行方法
-    protected $who;
-    protected function onRequest($action): ?bool
-    {
-        $token = $this->request()->getCookieParams(SysConst::COOKIE_USER_SESSION_NAME);
-        $bean = new Bean([
-            'session'=>$token
-        ]);
-        $model = new UserModel();
-        $bean = $model->sessionExist($bean);
-        if($bean){
-            $this->who = $bean;
-            return true;
-        }else{
-            $this->writeJson(Status::CODE_UNAUTHORIZED,null,'权限验证失败');
-            return false;
-        }
-    }*/
+
+    protected $_auth_rules = [
+        'token' => []
+    ];
+
     public function index()
     {
         $this->actionNotFound('index');

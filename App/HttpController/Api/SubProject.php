@@ -15,6 +15,10 @@ use EasySwoole\Core\Utility\Validate\Rules;
 
 class SubProject extends Base
 {
+
+    protected $_auth_rules = [
+        'token' => ['store', 'update', 'destory',]
+    ];
     /**
      * 实现index方法
      */

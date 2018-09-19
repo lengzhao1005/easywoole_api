@@ -14,6 +14,11 @@ use Overtrue\EasySms\EasySms;
 
 class VerificationCodes extends Base
 {
+
+    protected $_auth_rules = [
+        'token' => []
+    ];
+
     //code保存时间/s
     const EXPIRED_SEC = 300;
 
