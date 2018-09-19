@@ -34,7 +34,7 @@ class User extends Base
             $this->returnJsonCROS($verfy_result);
         }
         $rule = new Rules();
-        $rule->add('username','username')->withRule(Rule::REQUIRED)
+        $rule->add('username','username字段错误')->withRule(Rule::REQUIRED)
             ->withRule(Rule::MIN_LEN,3)
             ->withRule(Rule::MAX_LEN,60);
         $rule->add('password','password字段错误')->withRule(Rule::REQUIRED)
