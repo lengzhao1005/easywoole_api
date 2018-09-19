@@ -22,7 +22,7 @@ class Authorizations extends Base
     {
         //限制传输方式为post
         if(($verfy_result = $this->verificationMethod('post')) !== true){
-            return $this->returnJsonCROS($verfy_result);
+            return $this->returnJson($verfy_result);
         }
 
         //验证字段是否正合法
@@ -55,15 +55,16 @@ class Authorizations extends Base
             //窜在则获取用户token
             if(!empty($user)){
                 $token = \App\Model\User::setToken($user);
-                $this->returnJsonCROS(FormatResultErrors::CODE_MAP['SUCCESS'], [
+                $this->response()->setCookie(SysConst::COOKIE_USER_SESSION_NAME, $token, time() + \App\Model\User::EXPIRED_SEC);
+                $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'], [
                     'auth_token' => $token,
                 ]);
             }else{
-                $this->returnJsonCROS(FormatResultErrors::CODE_MAP['AUTH.FAIL']);
+                $this->returnJson(FormatResultErrors::CODE_MAP['AUTH.FAIL']);
             }
 
         }else{//非法
-            $this->returnJsonCROS([
+            $this->returnJson([
                 'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],
                 'message' => $v->getErrorList()->first()->getMessage(),
             ]);

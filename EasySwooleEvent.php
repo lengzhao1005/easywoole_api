@@ -3,6 +3,7 @@
 namespace EasySwoole;
 
 use App\Model\ProjectUser;
+use App\Model\User;
 use App\Utility\Redis;
 use App\Utility\SysConst;
 use EasySwoole\Core\Swoole\EventHelper;
@@ -36,6 +37,7 @@ Class EasySwooleEvent implements EventInterface {
         EventHelper::registerDefaultOnMessage($register,\App\Parser::class);
 
         $register->add($register::onClose, function ($ser, $fd) {
+            var_dump('close:'.$fd);
             if($id_user = Redis::getInstance()->get('fd:'.$fd)){
                 //在project房间中中加入用户
                 $id_projects = Redis::getInstance()->hGetAll(ProjectUser::USERPROJECTGREP.':'.$id_user);
@@ -48,14 +50,27 @@ Class EasySwooleEvent implements EventInterface {
             Redis::getInstance()->del('fd:'.$fd);
         });
 
-        /*$register->add($register::onOpen, function ($ser, $req) {
-            var_dump($req->fd);
-        });*/
+        $register->add($register::onOpen, function ($ser, $req) {
+            var_dump('onopen:'.$req->fd);
+            $fd = $req->fd;
+            if($id_user = Redis::getInstance()->get('fd:'.$fd)){
+                //在project房间中中加入用户
+                $projects = User::find($id_user)->projects()->get()->toArray();
+                var_dump($projects);
+                ServerManager::getInstance()->getServer()->push($fd, \json_encode([
+                    'type' => 'projects',
+                    'data' => $projects,
+                ]));
+            }
+        });
 
         // 自定义WS握手处理 可以实现在握手的时候 鉴定用户身份
         // @see https://wiki.swoole.com/wiki/page/409.html
         // ------------------------------------------------------------------------------------------
         $register->add($register::onHandShake, function (\swoole_http_request $request, \swoole_http_response $response) {
+
+            //var_dump($request);
+
             if (isset($request->cookie[SysConst::COOKIE_USER_SESSION_NAME])) {
                 $token = $request->cookie[SysConst::COOKIE_USER_SESSION_NAME];
 

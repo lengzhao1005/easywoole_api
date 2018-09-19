@@ -148,7 +148,6 @@ class Project extends Base
 
             return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'],$project->getJoinCode());
 
-
         }else{
             return $this->returnJson([
                 'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],
@@ -167,7 +166,7 @@ class Project extends Base
         $page = $this->request()->getRequestParam('page')??1;
         $pre_page = $this->request()->getRequestParam('pre_page')??6;
 
-        $projects = $this->who->projects()->paginate($pre_page)->toArray();
+        $projects = $this->who->projects()->toArray();
 
 
         return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'],$projects);

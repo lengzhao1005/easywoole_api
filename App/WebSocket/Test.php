@@ -9,8 +9,11 @@
 namespace App\WebSocket;
 
 
+use App\Model\User;
+use App\Utility\Redis;
 use EasySwoole\Core\Socket\Response;
 use EasySwoole\Core\Socket\AbstractInterface\WebSocketController;
+use EasySwoole\Core\Swoole\ServerManager;
 use EasySwoole\Core\Swoole\Task\TaskManager;
 
 class Test extends WebSocketController
@@ -26,18 +29,39 @@ class Test extends WebSocketController
 
     }
 
-    public function who(){
-        $this->response()->write('your fd is '.$this->client()->getFd());
+    public function projectlist_init(){
+        $fd = $this->client()->getFd();
+        if($id_user = Redis::getInstance()->get('fd:'.$fd)){
+            $projects = [];
+            try{
+                $projects = User::find($id_user)->projects()->get()->toArray();
+            }catch (\Exception $exception){
+                var_dump($exception->getMessage());
+            }
+            $this->response()->write(\json_encode([
+                'type' => 'projectlist_init',
+                'data' => $projects,
+            ]));
+        }
     }
 
-    function delay()
-    {
-        $this->response()->write('this is delay action');
-        $client = $this->client();
-        //测试异步推送
-        TaskManager::async(function ()use($client){
-            sleep(1);
-            Response::response($client,'this is async task res'.time());
-        });
+    public function tasklist_init(){
+        $fd = $this->client()->getFd();
+        var_dump('tasklist_init:'.$fd);
+        if($id_user = Redis::getInstance()->get('fd:'.$fd)){
+            //在project房间中中加入用户
+            $tasks = [];
+            try{
+                $tasks = User::find($id_user)->tasks()->get()->toArray();
+            }catch (\Exception $exception){
+                var_dump($exception->getMessage());
+            }
+
+            $this->response()->write(\json_encode([
+                'type' => 'tasklist_init',
+                'data' => $tasks,
+            ]));
+        }
+
     }
 }
