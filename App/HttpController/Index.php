@@ -9,6 +9,7 @@
 namespace App\HttpController;
 
 
+use App\Model\User;
 use EasySwoole\Core\Component\Pool\PoolManager;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
 use EasySwoole\Core\Http\Message\Status;
@@ -20,8 +21,13 @@ class Index extends Controller
     //测试路径 /index.html
     function index()
     {
+        $tasks = User::find(10)->tasks()->get()->map(function ($item){
+            unset($item['pivot']);
+            return $item;
+        })->toArray();
+        var_dump($tasks);
         // TODO: Implement index() method.
-        $this->response()->write('hello world');
+        $this->response()->write('hello world'.json_encode($tasks));
     }
     //测试路径 /test/index.html
     function test()

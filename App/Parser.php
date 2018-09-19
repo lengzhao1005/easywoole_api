@@ -19,7 +19,7 @@ class Parser implements ParserInterface
         // TODO: Implement decode() method.
         $command = new CommandBean();
         $json = json_decode($raw,1);
-        $command->setControllerClass(\App\WebSocket\Test::class);
+        $command->setControllerClass(\App\WebSocket\WebSocketController::class);
         $command->setAction($json['action']);
         $command->setArg('content',$json['content']);
         return $command;

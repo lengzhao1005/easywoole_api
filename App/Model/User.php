@@ -38,7 +38,7 @@ class User extends  LaravelBaseModel
      */
     public function tasks()
     {
-        return $this->belongsToMany(TaskUser::class,'task_user','id_user', 'id_task');
+        return $this->belongsToMany(Task::class,'task_user','id_user', 'id_task');
     }
 
     /**

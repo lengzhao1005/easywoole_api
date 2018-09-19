@@ -50,8 +50,8 @@ return [
         'driver'    => 'mysql',
         'host'      => '127.0.0.1',
         'database'  => 'test',
-        'username'  => 'homestead',
-        'password'  => 'secret',
+        'username'  => 'marcus',
+        'password'  => 'zjYinZhun@asdhuez#4@(_9',
         'charset'   => 'utf8',
         'collation' => 'utf8_general_ci',
         'prefix'    => ''
@@ -72,16 +72,16 @@ return [
     ],
     //连接池
     'POOL_MANAGER' => [
-/*        'App\Utility\MysqlPool2' => [
-            'min' => 5,
-            'max' => 100,
-            'type' => 1
-        ],*/
-/*        'App\Utility\RedisPool' => [
-            'min' => 5,
-            'max' => 100,
-            'type' => 1
-        ]*/
+        /*        'App\Utility\MysqlPool2' => [
+                    'min' => 5,
+                    'max' => 100,
+                    'type' => 1
+                ],*/
+        /*        'App\Utility\RedisPool' => [
+                    'min' => 5,
+                    'max' => 100,
+                    'type' => 1
+                ]*/
     ],
     //base url
     //'BASE_URL' => '192.168.10.10:9501/',
