@@ -9,8 +9,9 @@
 namespace App\HttpController;
 
 
+use App\Model\Project;
+use App\Model\Task;
 use App\Model\User;
-use EasySwoole\Core\Component\Pool\PoolManager;
 use EasySwoole\Core\Http\AbstractInterface\Controller;
 use EasySwoole\Core\Http\Message\Status;
 use EasySwoole\Core\Swoole\ServerManager;
@@ -21,9 +22,24 @@ class Index extends Controller
     //测试路径 /index.html
     function index()
     {
-        $tasks = User::find(10)->tasks()->get()->map(function ($item){
+        $id_user= 1;
+
+        $tasks = Project::where('id_project', 13)->with('tasks')->get()->map(function ($item) use ($id_user){
             unset($item['pivot']);
-            return $item;
+            $data['id_project'] = $item->id_project;
+            $data['project_name'] = $item->name;
+            $data['tasks'] = [];
+            foreach ($item->tasks as $k=>$task){
+                $data['tasks'][$k]['id_task'] = $task->id_task;
+                $data['tasks'][$k]['content'] = $task->content;
+                $data['tasks'][$k]['mine'] = ($id_user == $task->id_user_create ? true :false);
+                $data['tasks'][$k]['completed'] = ($task->is_finished == 2 ? true :false);
+                $data['tasks'][$k]['priority'] = [
+                    'type' => $task->emergency_rank,
+                    'txt' => Task::getEmergencyTxt($task->emergency_rank),
+                ];
+            }
+            return $data;
         })->toArray();
         var_dump($tasks);
         // TODO: Implement index() method.

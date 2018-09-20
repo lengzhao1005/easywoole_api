@@ -41,6 +41,15 @@ class Project extends LaravelBaseModel
     }
 
     /**
+     * 一对多关联任务
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'id_project', 'id_project');
+    }
+
+    /**
      * 多对多关联一个项目下的所用用户
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

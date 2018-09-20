@@ -51,17 +51,16 @@ Class EasySwooleEvent implements EventInterface {
         });
 
         $register->add($register::onOpen, function ($ser, $req) {
-            var_dump('onopen:'.$req->fd);
             $fd = $req->fd;
-            if($id_user = Redis::getInstance()->get('fd:'.$fd)){
+            var_dump('onopen:'.$fd);
+            /*if($id_user = Redis::getInstance()->get('fd:'.$fd)){
                 //在project房间中中加入用户
                 $projects = User::find($id_user)->projects()->get()->toArray();
-                var_dump($projects);
                 ServerManager::getInstance()->getServer()->push($fd, \json_encode([
                     'type' => 'projects',
                     'data' => $projects,
                 ]));
-            }
+            }*/
         });
 
         // 自定义WS握手处理 可以实现在握手的时候 鉴定用户身份
@@ -75,6 +74,7 @@ Class EasySwooleEvent implements EventInterface {
                 $token = $request->cookie[SysConst::COOKIE_USER_SESSION_NAME];
 
                 if ($id_user = Redis::getInstance()->get($token)) {
+
                     // 如果取得 token 并且验证通过 则进入 ws rfc 规范中约定的验证过程
                     if (!isset($request->header['sec-websocket-key'])) {
                         // 需要 Sec-WebSocket-Key 如果没有拒绝握手
@@ -105,7 +105,7 @@ Class EasySwooleEvent implements EventInterface {
 
                     //将fd与用户ID绑定
                     Redis::getInstance()->set('fd:'.$request->fd, $id_user);
-
+                    Redis::getInstance()->set('fd:token:'.$request->fd, $token);
                     //在project房间中中加入用户
                     $id_projects = Redis::getInstance()->hGetAll(ProjectUser::USERPROJECTGREP.':'.$id_user);
                     if(!empty($id_projects) && is_array($id_projects)){

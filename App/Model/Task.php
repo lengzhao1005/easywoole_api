@@ -36,4 +36,14 @@ class Task extends LaravelBaseModel
     {
         return $this->belongsToMany(User::class, 'task_user', 'id_task', 'id_user')->withTimestamps();
     }
+
+    public static function getEmergencyTxt($key)
+    {
+        $data = [
+            'low' => '普通',
+            'middle' => '紧急',
+            'high' => '非常紧急',
+        ];
+        return $data[$key];
+    }
 }
