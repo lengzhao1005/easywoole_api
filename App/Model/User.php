@@ -21,6 +21,9 @@ class User extends  LaravelBaseModel
     const PASSWORD_PREFIX = 'XINGYE_PASSWD';
     //token过期时间
     const EXPIRED_SEC = 3600*2;
+    //
+    const SW_FD_PREFIX='sw:fd:';
+    const SW_FD_TOKEN_PREFIX='sw:fd:token:';
 
 
     /**

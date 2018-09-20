@@ -80,13 +80,13 @@ class User extends Base
                 return $this->returnJson(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
             }*/
 
-           $user = \App\Model\User::where('email', $user_data['email'])->find();
+           $user = \App\Model\User::where('email', $user_data['email'])->first();
 
            if(!empty($user)){
                return $this->returnJson(FormatResultErrors::CODE_MAP['USER.EMAIL.EXITS']);
            }
 
-           $user = \App\Model\User::where('phone', $user_data['phone'])->find();
+           $user = \App\Model\User::where('phone', $user_data['phone'])->first();
 
             if(!empty($user)){
                 return $this->returnJson(FormatResultErrors::CODE_MAP['USER.PHONE.EXITS']);
