@@ -22,6 +22,7 @@ class Parser implements ParserInterface
         $command->setControllerClass(\App\WebSocket\WebSocketController::class);
         $command->setAction($json['action']);
         $command->setArg('content',$json['content']);
+        $command->setArg('auth_token',$json['auth_token']??'');
         return $command;
 
     }

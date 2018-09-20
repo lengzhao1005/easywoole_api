@@ -55,3 +55,20 @@ string(8) "close:18"
 string(12) "shake fai1 1"
 string(8) "close:19"
 [2018-09-20 09:41:51 #3632.2]	NOTICE	Server is shutdown now.
+[2018-09-20 18:20:51 *20073.7]	ERROR	zm_deactivate_swoole (ERROR 503): Fatal error: App\WebSocket\Users and App\WebSocket\Projects define the same property ($_auth_rules) in the composition of App\WebSocket\WebSocketController. However, the definition differs and is considered incompatible. Class was composed in /home/marcus/lnmp/nginx/html/easywoole_api/App/WebSocket/WebSocketController.php on line 21.
+[2018-09-20 18:20:51 $20055.0]	WARNING	swManager_check_exit_status: worker#7 abnormal exit, status=255, signal=0
+[2018-09-20 18:21:16 *20155.7]	ERROR	zm_deactivate_swoole (ERROR 503): Fatal error: App\WebSocket\Users and App\WebSocket\Projects define the same property ($_auth_rules) in the composition of App\WebSocket\WebSocketController. However, the definition differs and is considered incompatible. Class was composed in /home/marcus/lnmp/nginx/html/easywoole_api/App/WebSocket/WebSocketController.php on line 21.
+[2018-09-20 18:21:16 $20055.0]	WARNING	swManager_check_exit_status: worker#7 abnormal exit, status=255, signal=0
+[2018-09-20 18:21:18 *20176.7]	ERROR	zm_deactivate_swoole (ERROR 503): Fatal error: App\WebSocket\Users and App\WebSocket\Projects define the same property ($_auth_rules) in the composition of App\WebSocket\WebSocketController. However, the definition differs and is considered incompatible. Class was composed in /home/marcus/lnmp/nginx/html/easywoole_api/App/WebSocket/WebSocketController.php on line 21.
+[2018-09-20 18:21:18 $20055.0]	WARNING	swManager_check_exit_status: worker#7 abnormal exit, status=255, signal=0
+[2018-09-20 18:21:20 *20177.7]	ERROR	zm_deactivate_swoole (ERROR 503): Fatal error: App\WebSocket\Users and App\WebSocket\Projects define the same property ($_auth_rules) in the composition of App\WebSocket\WebSocketController. However, the definition differs and is considered incompatible. Class was composed in /home/marcus/lnmp/nginx/html/easywoole_api/App/WebSocket/WebSocketController.php on line 21.
+[2018-09-20 18:21:20 $20055.0]	WARNING	swManager_check_exit_status: worker#7 abnormal exit, status=255, signal=0
+[2018-09-20 18:55:48 ^22623.10]	ERROR	zm_deactivate_swoole (ERROR 503): Fatal error: Uncaught SuperClosure\Exception\ClosureUnserializationException: The closure did not unserialize to a SuperClosure. in /home/marcus/lnmp/nginx/html/easywoole_api/vendor/jeremeamia/SuperClosure/src/Serializer.php:110
+Stack trace:
+#0 /home/marcus/lnmp/nginx/html/easywoole_api/vendor/easyswoole/easyswoole/src/Core/Component/SuperClosure.php(35): SuperClosure\Serializer->unserialize('N;')
+#1 [internal function]: EasySwoole\Core\Component\SuperClosure->__wakeup()
+#
+[2018-09-20 18:55:48 $22618.0]	WARNING	swManager_check_exit_status: worker#10 abnormal exit, status=255, signal=0
+[2018-09-20 19:49:52 *26547.7]	NOTICE	swFactoryProcess_finish (ERROR 1004): send 79 byte failed, because connection[fd=1] is closed.
+[2018-09-20 19:49:52 *26547.7]	NOTICE	swFactoryProcess_finish (ERROR 1004): send 85 byte failed, because connection[fd=1] is closed.
+[2018-09-20 21:41:59 #26528.2]	NOTICE	Server is shutdown now.

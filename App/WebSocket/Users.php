@@ -20,11 +20,7 @@ use EasySwoole\Core\Utility\Validate\Validate;
 
 trait Users
 {
-    protected $_auth_rules = [
-        'token' => []
-    ];
-
-    public function register($data = [])
+    private function register($data = [])
     {
         $rule = new Rules();
         $rule->add('email','email字段错误')->withRule(Rule::REQUIRED)
@@ -51,15 +47,15 @@ trait Users
             //$code = $this->request()->getRequestParam('code');
 
             if($user_data['password'] !== $data['password_confirm']){
-                return $this->getResponseData(FormatResultErrors::CODE_MAP['PASSWORD.NOT.SAME']);
+                return $this->_getResponseData(FormatResultErrors::CODE_MAP['PASSWORD.NOT.SAME']);
             }
 
             if(!preg_match("/\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/",$user_data['email'])){
-                return $this->getResponseData(FormatResultErrors::CODE_MAP['EMAIL.INVALID']);
+                return $this->_getResponseData(FormatResultErrors::CODE_MAP['EMAIL.INVALID']);
             }
 
             if(!preg_match("/^1[34578]\d{9}$/",$user_data['phone'])){
-                return $this->getResponseData(FormatResultErrors::CODE_MAP['PHONE.INVALID']);
+                return $this->_getResponseData(FormatResultErrors::CODE_MAP['PHONE.INVALID']);
             }
             //获取缓存验证码
             /* $key = $this->request()->getRequestParam('verification_key');
@@ -67,37 +63,35 @@ trait Users
              $verify_code = Redis::getInstance()->hGet($hkey,$username);
  
              if(!$verify_code){
-                 return $this->getResponseData(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
+                 return $this->_getResponseData(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
              }
              if(!hash_equals($verify_code, $code)){
-                 return $this->getResponseData(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
+                 return $this->_getResponseData(FormatResultErrors::CODE_MAP['VERIFY.CODE.EXPIRED']);
              }*/
 
             $user = \App\Model\User::where('email', $user_data['email'])->first();
 
             if(!empty($user)){
-                return $this->getResponseData(FormatResultErrors::CODE_MAP['USER.EMAIL.EXITS']);
+                return $this->_getResponseData(FormatResultErrors::CODE_MAP['USER.EMAIL.EXITS']);
             }
 
-            $user = \App\Model\User::where('phone', $user_data['phone'])->find();
+            $user = \App\Model\User::where('phone', $user_data['phone'])->first();
 
             if(!empty($user)){
-                return $this->getResponseData(FormatResultErrors::CODE_MAP['USER.PHONE.EXITS']);
+                return $this->_getResponseData(FormatResultErrors::CODE_MAP['USER.PHONE.EXITS']);
             }
 
             try{
                 $user = \App\Model\User::create($user_data);
             }catch (\Exception $e){
-                return $this->getResponseData(FormatResultErrors::CODE_MAP['USER.ALLREADY.EXITS']);
+                return $this->_getResponseData(FormatResultErrors::CODE_MAP['USER.ALLREADY.EXITS']);
             }
 
-            $token = \App\Model\User::setToken($user);
-            return $this->getResponseData(FormatResultErrors::CODE_MAP['SUCCESS'], [
-                'auth_token' => $token,
-            ]);
+            //$token = \App\Model\User::setToken($user);
+            return $this->_getResponseData(FormatResultErrors::CODE_MAP['SUCCESS']);
 
         }else{
-            return $this->getResponseData([
+            return $this->_getResponseData([
                 'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],
                 'message' => $v->getErrorList()->first()->getMessage(),
             ]);
@@ -142,28 +136,17 @@ trait Users
                 $token = \App\Model\User::setToken($user);
                 $id_user = $user->id_user;
 
-                //异步任务将fd与用户ID绑定
-                TaskManager::async(function () use ($fd, $id_user, $token){
-                    Redis::getInstance()->set(User::SW_FD_PREFIX.$fd, $id_user);
-                    Redis::getInstance()->setex(User::SW_FD_TOKEN_PREFIX.$fd, User::EXPIRED_SEC, $token);
-                    //在project房间中中加入用户
-                    $id_projects = Redis::getInstance()->hGetAll(ProjectUser::USERPROJECTGREP.':'.$id_user);
-                    if(!empty($id_projects) && is_array($id_projects)){
-                        foreach($id_projects as $id_project){
-                            Redis::getInstance()->hset(ProjectUser::PROJECTROOM.':'.$id_project, $id_user, $fd);
-                        }
-                    }
-                });
+                var_dump('fd:'.$fd.'--uid:'.$id_user);
 
-                $this->getResponseData(FormatResultErrors::CODE_MAP['SUCCESS'], [
+                return $this->_getResponseData(FormatResultErrors::CODE_MAP['SUCCESS'], [
                     'auth_token' => $token,
                 ]);
             }else{
-                $this->getResponseData(FormatResultErrors::CODE_MAP['AUTH.FAIL']);
+                return $this->_getResponseData(FormatResultErrors::CODE_MAP['AUTH.FAIL']);
             }
 
         }else{//非法
-            $this->getResponseData([
+            return $this->_getResponseData([
                 'code' => FormatResultErrors::CODE_MAP['FIELD.INVALID']['code'],
                 'message' => $v->getErrorList()->first()->getMessage(),
             ]);
@@ -174,6 +157,6 @@ trait Users
      */
     function info()
     {
-        //return $this->getResponseData(FormatResultErrors::CODE_MAP['SUCCESS'], $this->who->toArray());
+        //return $this->_getResponseData(FormatResultErrors::CODE_MAP['SUCCESS'], $this->who->toArray());
     }
 }

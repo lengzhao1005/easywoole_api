@@ -59,3 +59,18 @@
 18-09-20 15:31:09:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/App/Model/Task.php] line[47] message:[Undefined index: ]
 18-09-20 15:31:09:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/App/HttpController/Index.php] line[33] message:[Trying to get property 'name' of non-object]
 18-09-20 16:22:32:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/App/WebSocket/WebSocketController.php] line[41] message:[json_decode() expects parameter 1 to be string, array given]
+18-09-20 18:20:51:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/App/WebSocket/WebSocketController.php] line[21] message:[App\WebSocket\Users and App\WebSocket\Projects define the same property ($_auth_rules) in the composition of App\WebSocket\WebSocketController. However, the definition differs and is considered incompatible. Class was composed]
+18-09-20 18:21:16:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/App/WebSocket/WebSocketController.php] line[21] message:[App\WebSocket\Users and App\WebSocket\Projects define the same property ($_auth_rules) in the composition of App\WebSocket\WebSocketController. However, the definition differs and is considered incompatible. Class was composed]
+18-09-20 18:21:18:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/App/WebSocket/WebSocketController.php] line[21] message:[App\WebSocket\Users and App\WebSocket\Projects define the same property ($_auth_rules) in the composition of App\WebSocket\WebSocketController. However, the definition differs and is considered incompatible. Class was composed]
+18-09-20 18:21:20:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/App/WebSocket/WebSocketController.php] line[21] message:[App\WebSocket\Users and App\WebSocket\Projects define the same property ($_auth_rules) in the composition of App\WebSocket\WebSocketController. However, the definition differs and is considered incompatible. Class was composed]
+18-09-20 18:55:48:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/vendor/jeremeamia/SuperClosure/src/SerializableClosure.php] line[116] message:[Serialization of closure failed: The closure was not found within the abstract syntax tree.]
+18-09-20 18:55:48:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/vendor/jeremeamia/SuperClosure/src/Serializer.php] line[110] message:[Uncaught SuperClosure\Exception\ClosureUnserializationException: The closure did not unserialize to a SuperClosure. in /home/marcus/lnmp/nginx/html/easywoole_api/vendor/jeremeamia/SuperClosure/src/Serializer.php:110
+Stack trace:
+#0 /home/marcus/lnmp/nginx/html/easywoole_api/vendor/easyswoole/easyswoole/src/Core/Component/SuperClosure.php(35): SuperClosure\Serializer->unserialize('N;')
+#1 [internal function]: EasySwoole\Core\Component\SuperClosure->__wakeup()
+#2 /home/marcus/lnmp/nginx/html/easywoole_api/vendor/easyswoole/easyswoole/src/Core/Swoole/ServerManager.php(67): Swoole\Http\Server->start()
+#3 /home/marcus/lnmp/nginx/html/easywoole_api/vendor/easyswoole/easyswoole/src/Core/Core.php(45): EasySwoole\Core\Swoole\ServerManager->start()
+#4 /home/marcus/lnmp/nginx/html/easywoole_api/vendor/easyswoole/easyswoole/bin/easyswoole(326): EasySwoole\Core\Core->run()
+#5 /home/marcus/lnmp/nginx/html/easywoole_api/vendor/easyswoole/easyswoole/bin/easyswoole(25): serverStart(Array)
+#6 /home/marcus/lnmp/nginx/html/easyw]
+18-09-20 19:34:24:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/App/WebSocket/WebSocketController.php] line[35] message:[Array to string conversion]
