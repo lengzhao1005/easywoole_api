@@ -70,10 +70,10 @@ Class EasySwooleEvent implements EventInterface {
 
             //var_dump($request);
 
-            if (isset($request->cookie[SysConst::COOKIE_USER_SESSION_NAME])) {
-                $token = $request->cookie[SysConst::COOKIE_USER_SESSION_NAME];
-
-                if ($id_user = Redis::getInstance()->get($token)) {
+//            if (isset($request->cookie[SysConst::COOKIE_USER_SESSION_NAME])) {
+//                $token = $request->cookie[SysConst::COOKIE_USER_SESSION_NAME];
+//
+//                if ($id_user = Redis::getInstance()->get($token)) {
 
                     // 如果取得 token 并且验证通过 则进入 ws rfc 规范中约定的验证过程
                     if (!isset($request->header['sec-websocket-key'])) {
@@ -104,22 +104,22 @@ Class EasySwooleEvent implements EventInterface {
                     }
 
                     //将fd与用户ID绑定
-                    Redis::getInstance()->set('fd:'.$request->fd, $id_user);
-                    Redis::getInstance()->set('fd:token:'.$request->fd, $token);
-                    //在project房间中中加入用户
-                    $id_projects = Redis::getInstance()->hGetAll(ProjectUser::USERPROJECTGREP.':'.$id_user);
-                    if(!empty($id_projects) && is_array($id_projects)){
-                        foreach($id_projects as $id_project){
-                            Redis::getInstance()->hset(ProjectUser::PROJECTROOM.':'.$id_project, $id_user, $request->fd);
-                        }
-                    }
+//                    Redis::getInstance()->set('fd:'.$request->fd, $id_user);
+//                    Redis::getInstance()->set('fd:token:'.$request->fd, $token);
+//                    在project房间中中加入用户
+//                    $id_projects = Redis::getInstance()->hGetAll(ProjectUser::USERPROJECTGREP.':'.$id_user);
+//                    if(!empty($id_projects) && is_array($id_projects)){
+//                        foreach($id_projects as $id_project){
+//                            Redis::getInstance()->hset(ProjectUser::PROJECTROOM.':'.$id_project, $id_user, $request->fd);
+//                        }
+//                    }
 
 
                     //接受握手  发送验证后的header   还需要101状态码以切换状态
                     $response->status(101);
                     var_dump('shake success at fd :' . $request->fd);
                     $response->end();
-                } else {
+                /*} else {
                     // 令牌不正确的情况 不接受握手
                     var_dump('shake fail 2');
                     $response->end();
@@ -130,7 +130,7 @@ Class EasySwooleEvent implements EventInterface {
                 var_dump('shake fai1 1');
                 $response->end();
                 return false;
-            }
+            }*/
         });
     }
 

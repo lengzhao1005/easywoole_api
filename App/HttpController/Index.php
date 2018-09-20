@@ -23,7 +23,8 @@ class Index extends Controller
     function index()
     {
         $id_user= 1;
-
+        $user = \App\Model\User::where('email', '123')->first();
+        var_dump($user);
         $tasks = Project::where('id_project', 13)->with('tasks')->get()->map(function ($item) use ($id_user){
             unset($item['pivot']);
             $data['id_project'] = $item->id_project;
@@ -41,7 +42,7 @@ class Index extends Controller
             }
             return $data;
         })->toArray();
-        var_dump($tasks);
+        //var_dump($tasks);
         // TODO: Implement index() method.
         $this->response()->write('hello world'.json_encode($tasks));
     }

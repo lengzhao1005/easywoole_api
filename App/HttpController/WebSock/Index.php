@@ -22,6 +22,7 @@ class Index extends Controller
     {
         // TODO: Implement index() method.
         $content = file_get_contents(__DIR__.'/client.html');
+        $user = \App\Model\User::where('email', '123')->find();
         $this->response()->write($content);
         //$this->response()->setCookie('token','123',time()+3600);
     }

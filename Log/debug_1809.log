@@ -58,3 +58,4 @@
 18-09-20 15:31:09:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/App/HttpController/Index.php] line[25] message:[Undefined variable: id_user]
 18-09-20 15:31:09:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/App/Model/Task.php] line[47] message:[Undefined index: ]
 18-09-20 15:31:09:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/App/HttpController/Index.php] line[33] message:[Trying to get property 'name' of non-object]
+18-09-20 16:22:32:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/App/WebSocket/WebSocketController.php] line[41] message:[json_decode() expects parameter 1 to be string, array given]
