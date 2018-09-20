@@ -9,6 +9,7 @@ class FormatResultErrors
         'SYS.ERR' => ['code' => '101', 'message' => '系统错误', ],
         'TOKEN.INVALID' => ['code' => '102', 'message' => '无效的token', ],
         'METHOD.NOTALLOW' => ['code' => '103', 'message' => '传输方式不被允许', ],
+        'NO.ACCESS' => ['code' => '104', 'message' => '无权限做改动', ],
 
         'FIELD.INVALID' => ['code' => '201', 'message' => '字段非法', ],
         'USERNAME.NOTNULL' => ['code' => '202', 'message' => '用户名不能为空', ],

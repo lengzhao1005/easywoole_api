@@ -72,3 +72,9 @@ Stack trace:
 [2018-09-20 19:49:52 *26547.7]	NOTICE	swFactoryProcess_finish (ERROR 1004): send 79 byte failed, because connection[fd=1] is closed.
 [2018-09-20 19:49:52 *26547.7]	NOTICE	swFactoryProcess_finish (ERROR 1004): send 85 byte failed, because connection[fd=1] is closed.
 [2018-09-20 21:41:59 #26528.2]	NOTICE	Server is shutdown now.
+[2018-09-20 23:03:31 *6606.7]	WARNING	swWorker_discard_data (ERROR 1007): [1]received the wrong data[99 bytes] from socket#4
+[2018-09-20 23:03:53 *6606.7]	WARNING	swWorker_discard_data (ERROR 1007): [1]received the wrong data[99 bytes] from socket#5
+[2018-09-20 23:18:50 *7767.7]	NOTICE	swFactoryProcess_finish (ERROR 1004): send 216 byte failed, because connection[fd=1] is closed.
+[2018-09-20 23:23:29 *8227.7]	NOTICE	swFactoryProcess_finish (ERROR 1004): send 200 byte failed, because connection[fd=1] is closed.
+[2018-09-20 23:56:10 *10471.7]	NOTICE	swFactoryProcess_finish (ERROR 1004): send 228 byte failed, because connection[fd=1] is closed.
+[2018-09-20 23:56:10 *10471.7]	NOTICE	swFactoryProcess_finish (ERROR 1004): send 473 byte failed, because connection[fd=1] is closed.

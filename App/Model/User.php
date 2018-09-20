@@ -106,4 +106,9 @@ class User extends  LaravelBaseModel
         }
         return false;
     }
+
+    public function police($other_id_user = '')
+    {
+        return $this->id_user === $other_id_user;
+    }
 }
