@@ -26,7 +26,7 @@ class WebSocketController extends BaseWebSocketController
     use Users, Projects, Tasks;
 
     protected $_auth_rules = [
-        'token' => ['projectlist_init', 'tasklist_init', 'project_init', 'tasklist_project_init', 'project_modify', 'project_save']
+        'token' => ['projectlist_init', 'tasklist_init', 'project_init', 'tasklist_project_init', 'project_modify', 'project_save', 'task_init', 'task_save', 'member_project_fetchall']
     ];
 
     public $who;
@@ -66,12 +66,10 @@ class WebSocketController extends BaseWebSocketController
         }
 
         $auth_token = $this->request()->getArg('auth_token');
-        var_dump('auth_token'.$auth_token);
         if(!empty($auth_token) && $id_user = Redis::getInstance()->get($auth_token)){
             $user = User::find($id_user);
             if(!empty($user)){
                 $this->who = $user;
-                var_dump('+++++++++id_user'.$this->who->id_user);
                 User::resetTokenExpiredTime($auth_token);
 
                 //$this->_room();
@@ -93,9 +91,6 @@ class WebSocketController extends BaseWebSocketController
 
     protected function _apiResponse($data = array(), $type = '')
     {
-        var_dump(empty($type)? $this->request()->getAction() : $type);
-
-
         $data['type'] = empty($type)? $this->request()->getAction() : $type ;
         $this->response()->write(\json_encode($data));
     }
@@ -181,6 +176,7 @@ class WebSocketController extends BaseWebSocketController
                 unset($item['pivot']);
                 $data['id_task'] = $item->id_task;
                 $data['content'] = $item->content;
+                $data['name'] = $item->title;
                 $data['priority'] = [
                     'type' => $item->emergency_rank,
                     'txt' => Task::getEmergencyTxt($item->emergency_rank),
@@ -201,14 +197,13 @@ class WebSocketController extends BaseWebSocketController
     }
 
     /**
-     * 项目详情
+     * 项目（名称和描述）详情
      */
     public function project_init()
     {
         if($this->_beforeAction()){
 
             $request_data = $this->request()->getArg('content');
-            var_dump('--------id_user'. $this->who->id_user);
             $response_data = $this->showProject($request_data);
 
             $this->_apiResponse($response_data);
@@ -218,14 +213,12 @@ class WebSocketController extends BaseWebSocketController
     }
 
     /**
-     * 项目详情
+     * 项目下的任务详情
      */
     public function tasklist_project_init()
     {
         if($this->_beforeAction()){
-var_dump('tasklist_project_init');
             $request_data = $this->request()->getArg('content')??[];
-            var_dump('--------id_user'. $this->who->id_user);
             $response_data = $this->showTasksByIdProject($request_data);
 
             $this->_apiResponse($response_data);
@@ -252,15 +245,15 @@ var_dump('tasklist_project_init');
     }
 
     /**
-     * 删除项目
+     * 任务详情
      */
-    public function project_delete()
+    public function task_init()
     {
         if($this->_beforeAction()){
 
             $request_data = $this->request()->getArg('content');
             var_dump($request_data);
-            $response_data = $this->destoryProject($request_data);
+            $response_data = $this->showTask($request_data);
             var_dump($response_data);
             $this->_apiResponse($response_data);
         }else{
@@ -268,5 +261,34 @@ var_dump('tasklist_project_init');
         }
     }
 
+    /**
+     * 保存/修改任务
+     */
+    public function task_save()
+    {
+        if($this->_beforeAction()){
 
+            $request_data = $this->request()->getArg('content');
+            var_dump($request_data);
+            $response_data = $this->saveTask($request_data);
+            var_dump($response_data);
+            $this->_apiResponse($response_data);
+        }else{
+            $this->_auth_fail();
+        }
+    }
+
+    public function member_project_fetchall()
+    {
+        if($this->_beforeAction()){
+
+            $request_data = $this->request()->getArg('content');
+            var_dump($request_data);
+            $response_data = $this->getUsersByIdProject($request_data);
+            var_dump($response_data);
+            $this->_apiResponse($response_data);
+        }else{
+            $this->_auth_fail();
+        }
+    }
 }

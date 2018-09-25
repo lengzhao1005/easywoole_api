@@ -78,3 +78,28 @@ Stack trace:
 [2018-09-20 23:23:29 *8227.7]	NOTICE	swFactoryProcess_finish (ERROR 1004): send 200 byte failed, because connection[fd=1] is closed.
 [2018-09-20 23:56:10 *10471.7]	NOTICE	swFactoryProcess_finish (ERROR 1004): send 228 byte failed, because connection[fd=1] is closed.
 [2018-09-20 23:56:10 *10471.7]	NOTICE	swFactoryProcess_finish (ERROR 1004): send 473 byte failed, because connection[fd=1] is closed.
+loading data from file at process EasySwoole_Cache_Process_2
+loading data from file success at process EasySwoole_Cache_Process_2
+loading data from file at process EasySwoole_Cache_Process_1
+loading data from file success at process EasySwoole_Cache_Process_1
+loading data from file at process EasySwoole_Cache_Process_0
+loading data from file success at process EasySwoole_Cache_Process_0
+NULL
+string(7) "close:1"
+[2018-09-21 15:08:41 #15509.2]	NOTICE	Server is shutdown now.
+[2018-09-21 17:41:36 *4355.7]	NOTICE	swFactoryProcess_finish (ERROR 1004): send 295 byte failed, because connection[fd=2] is closed.
+[2018-09-21 17:41:36 *4355.7]	NOTICE	swFactoryProcess_finish (ERROR 1004): send 712 byte failed, because connection[fd=2] is closed.
+[2018-09-21 20:37:35 *6683.7]	WARNING	swSignalfd_onSignal: signal[1] callback is null.
+[2018-09-21 20:37:35 *6682.6]	WARNING	swSignalfd_onSignal: signal[1] callback is null.
+[2018-09-21 20:37:35 *6680.4]	WARNING	swSignalfd_onSignal: signal[1] callback is null.
+[2018-09-21 20:37:35 *6677.1]	WARNING	swSignalfd_onSignal: signal[1] callback is null.
+[2018-09-21 20:37:35 $6665.0]	WARNING	swSignal_callback: signal[1] callback is null.
+[2018-09-21 20:37:35 #6664.2]	WARNING	swSignalfd_onSignal: signal[1] callback is null.
+[2018-09-21 20:37:35 $6665.0]	WARNING	swManager_check_exit_status: worker#18 abnormal exit, status=0, signal=1
+[2018-09-21 20:37:35 $6665.0]	WARNING	swManager_check_exit_status: worker#17 abnormal exit, status=0, signal=1
+[2018-09-21 20:37:35 *6681.5]	WARNING	swSignalfd_onSignal: signal[1] callback is null.
+[2018-09-21 20:37:35 *6679.3]	WARNING	swSignalfd_onSignal: signal[1] callback is null.
+[2018-09-21 20:37:35 *6678.2]	WARNING	swSignalfd_onSignal: signal[1] callback is null.
+[2018-09-21 20:37:35 $6665.0]	WARNING	swManager_check_exit_status: worker#16 abnormal exit, status=0, signal=1
+[2018-09-21 20:37:35 *6676.0]	WARNING	swSignalfd_onSignal: signal[1] callback is null.
+[2018-09-25 09:10:00 #6664.2]	NOTICE	Server is shutdown now.

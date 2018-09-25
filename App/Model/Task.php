@@ -46,4 +46,9 @@ class Task extends LaravelBaseModel
         ];
         return $data[$key];
     }
+
+    public function mine($id_user = '')
+    {
+        return $this->id_user_create == $id_user;
+    }
 }

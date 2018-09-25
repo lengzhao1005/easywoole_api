@@ -20,9 +20,6 @@ trait Projects
         $rule->add('id_project','id_project不能为空')->withRule(Rule::REQUIRED)
             ->withRule(Rule::MIN_LEN,1);
         //执行验证
-        var_dump('showTasksByIdProject');
-        var_dump(111);
-        var_dump($data);
         $validate = new Validate();
         $v = $validate->validate($data, $rule);
         var_dump(222);
@@ -37,7 +34,9 @@ trait Projects
                 foreach ($project_task->tasks as $k=>$task){
                     $rep_data[] = array(
                         'id_task' => $task->id_task,
+                        'id_project' => $task->id_project,
                         'content' => $task->content,
+                        'name' => $task->title,
                         'mine' => ($id_user == $task->id_user_create ? true :false),
                         'completed' => ($task->is_finished == 2 ? true :false),
                         'priority' => [
@@ -46,6 +45,7 @@ trait Projects
                         ]
                     );
                 }
+                var_dump('showTasksByIdProject_id_user');
                 //返回数据
                 return $this->_getResponseData(FormatResultErrors::CODE_MAP['SUCCESS'], ['tasks' => $rep_data]);
             }else{
@@ -205,13 +205,15 @@ trait Projects
             }
 
             $users = $project->users()->get()->map(function ($item){
-                unset($item['id_user']);
-                unset($item['pivot']);
-                return $item;
+                $user = [
+                    'id_user' => $item->id_user,
+                    'nickname' => $item->nickname,
+                ];
+                return $user;
             })->toArray();
 
             return $this->_getResponseData(FormatResultErrors::CODE_MAP['SUCCESS'],[
-                'users' => $users,
+                'members_project' => $users,
             ]);
 
 
