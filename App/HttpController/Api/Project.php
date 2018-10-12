@@ -172,4 +172,9 @@ class Project extends Base
         return $this->returnJson(FormatResultErrors::CODE_MAP['SUCCESS'],$projects);
     }
 
+    public function setMember()
+    {
+        ProjectUser::setBatchUserProjectList();
+    }
+
 }

@@ -43,12 +43,16 @@ class ProjectUser extends LaravelBaseModel
      */
     public static function setBatchUserProjectList()
     {
+        echo 'start set ...';
         self::select('id_user', 'id_project')->chunk(100, function($project_users){
             $redis = Redis::getInstance();
+
             foreach ($project_users as $project_user){
+                echo self::USERPROJECTGREP.':'.$project_user->id_user.' --id_project'.$project_user->id_project.PHP_EOL;
                 $redis->hSet(self::USERPROJECTGREP.':'.$project_user->id_user,$project_user->id_project,$project_user->id_project);
             }
         });
+        echo 'end set ...';
     }
 
 
@@ -59,9 +63,11 @@ class ProjectUser extends LaravelBaseModel
             echo "push message is calla at".date('Y-m-d H:i').' --type is'. $type . '--id_project is'. $id_project . PHP_EOL;
 
             $fds = Redis::getInstance()->hGetAll(ProjectUser::PROJECTROOM.':'.$id_project);
+            var_dump($fds);
             if(!empty($fds) && is_array($fds)){
                 foreach($fds as $fd){
                     $info = ServerManager::getInstance()->getServer()->connection_info($fd);
+                    var_dump(is_array($info));
                     if(is_array($info)){
                         ServerManager::getInstance()->getServer()->push($fd, \json_encode([
                             'type' => $type,

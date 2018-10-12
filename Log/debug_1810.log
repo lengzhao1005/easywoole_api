@@ -1,0 +1,6 @@
+18-10-11 09:41:06:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/vendor/illuminate/database/Connection.php] line[326] message:[PDO::prepare(): send of 60 bytes failed with errno=32 Broken pipe]
+18-10-11 09:41:06:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/vendor/illuminate/database/Connection.php] line[326] message:[Error while sending STMT_PREPARE packet. PID=25701]
+18-10-11 10:19:55:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/vendor/illuminate/database/Connection.php] line[326] message:[PDO::prepare(): send of 70 bytes failed with errno=32 Broken pipe]
+18-10-11 10:19:55:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/vendor/illuminate/database/Connection.php] line[326] message:[Error while sending STMT_PREPARE packet. PID=25694]
+18-10-12 14:50:54:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/vendor/illuminate/database/Connection.php] line[326] message:[PDO::prepare(): send of 70 bytes failed with errno=32 Broken pipe]
+18-10-12 14:50:54:Error at file[/home/marcus/lnmp/nginx/html/easywoole_api/vendor/illuminate/database/Connection.php] line[326] message:[Error while sending STMT_PREPARE packet. PID=25699]

@@ -72,7 +72,7 @@ class WebSocketController extends BaseWebSocketController
                 $this->who = $user;
                 User::resetTokenExpiredTime($auth_token);
 
-                //$this->_room();
+                $this->_room();
                 return true;
             }
         }

@@ -55,6 +55,9 @@ class Router extends \EasySwoole\Core\Http\AbstractInterface\Router
         $routeCollector->post('/api/tasks','/api/task/store');
         //获取用户下所用的项目
         $routeCollector->get('/api/tasks', '/api/project/getTasksByUid');
+        
+        //批量设置房间成员
+        $routeCollector->get('/batch-set-room-member', '/api/project/setMember');
 
 
         //==============================================跨域
