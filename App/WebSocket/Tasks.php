@@ -42,7 +42,7 @@ trait Tasks
                 'id_task' => $task->id_task,
                 'id_project' => $task->id_project,
                 'mine' => ($this->who->id_user === $task->id_user_create ? true :false),
-                'completed' => ($task->is_finished == 2 ? true :false),
+                'completed' => $task->isFinished(),
                 'name' => $task->title,
                 'content' => $task->content,
                 'members_task' => $members_task,
@@ -148,7 +148,7 @@ trait Tasks
                 //$task->cost_time = $cost_time;
                 $task->expire_time = $expire_time;
                 $task->save();
-
+                $type = 'task_new';
             }else{//创建
                 $task = new Task();
                 $task->title = $task_title;
@@ -160,13 +160,25 @@ trait Tasks
                 $task->id_project = $id_project;
                 $task->id_user_create = $this->who->id_user;
                 $task->save();
+                $type = 'task_modify';
             }
 
             //关联用户
             $task->users()->sync($id_users);
 
             //推送异步ws消息
-            //\App\Model\ProjectUser::pushMsg($id_project, 'task', $insert_data);
+            \App\Model\ProjectUser::pushMsg($id_project, $type, array(
+                'id_task' => $task->id_task,
+                'id_project' => $task->id_project,
+                'content' => $task->content,
+                'name' => $task->title,
+                'mine' => $this->who->mine($task->id_user_create),
+                'completed' => $task->isFinished(),
+                'priority' => [
+                    'type' => $task->emergency_rank,
+                    'txt' => Task::getEmergencyTxt($task->emergency_rank),
+                ]
+            ));
 
             return $this->_getResponseData(FormatResultErrors::CODE_MAP['SUCCESS'], [
                 'task'=>[

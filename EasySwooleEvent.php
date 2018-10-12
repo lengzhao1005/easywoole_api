@@ -38,8 +38,8 @@ Class EasySwooleEvent implements EventInterface {
 
         $register->add($register::onClose, function ($ser, $fd) {
             var_dump('close:'.$fd);
-            if($id_user = Redis::getInstance()->get('fd:'.$fd)){
-                //在project房间中中加入用户
+            if($id_user = Redis::getInstance()->get(User::SW_FD_PREFIX.$fd)){
+                //在project房间下线用户
                 $id_projects = Redis::getInstance()->hGetAll(ProjectUser::USERPROJECTGREP.':'.$id_user);
                 if(!empty($id_projects) && is_array($id_projects)){
                     foreach($id_projects as $id_project){

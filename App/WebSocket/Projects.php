@@ -3,6 +3,7 @@
 namespace App\WebSocket;
 
 use App\Model\Project;
+use App\Model\ProjectUser;
 use App\Model\Task;
 use App\Utility\FormatResultErrors;
 use Carbon\Carbon;
@@ -37,8 +38,8 @@ trait Projects
                         'id_project' => $task->id_project,
                         'content' => $task->content,
                         'name' => $task->title,
-                        'mine' => ($id_user == $task->id_user_create ? true :false),
-                        'completed' => ($task->is_finished == 2 ? true :false),
+                        'mine' => $this->who->mine($task->id_user_create),
+                        'completed' => $task->isFinished(),
                         'priority' => [
                             'type' => $task->emergency_rank,
                             'txt' => Task::getEmergencyTxt($task->emergency_rank),
@@ -66,7 +67,6 @@ trait Projects
         $rule->add('id_project','id_project不能为空')->withRule(Rule::REQUIRED)
             ->withRule(Rule::MIN_LEN,1);
         //执行验证
-        var_dump(111);
         $validate = new Validate();
         $v = $validate->validate($data, $rule);
         if(!$v->hasError()){
@@ -125,6 +125,7 @@ trait Projects
                 $project->name = $data['name'];
                 $project->description = $desc;
                 $project->save();
+                $type = 'project_new';
             }else{
                 //创建项目
                 $project = new Project();
@@ -132,12 +133,17 @@ trait Projects
                 $project->description = $desc;
                 $project->id_user_create = $this->who->id_user;
                 $project->save();
-                var_dump($project);
                 //关联到中间表
                 $this->who->projects()->attach($project->id_project);
                 //设置user-projectproject
                 \App\Model\ProjectUser::setUserProjectList($project->id_project,$this->who->id_user);
+                $type = 'project_modify';
             }
+
+            ProjectUser::pushMsg($project->id_project, $type, [
+                'project' => $project->toArray()
+            ]);
+
 
             //返回数据
             return $this->_getResponseData(FormatResultErrors::CODE_MAP['SUCCESS'], ['project' => $project->toArray()]);

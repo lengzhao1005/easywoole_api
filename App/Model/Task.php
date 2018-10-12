@@ -15,7 +15,7 @@ class Task extends LaravelBaseModel
     protected $primaryKey = 'id_task';
     const CREATED_AT = 'create_time';
     const UPDATED_AT = 'update_time';
-
+    const FINISHED_STATUS = 2;
     //任务紧急度
     const EMERGENCY_RANK = [
         'low', 'middle', 'high'
@@ -50,5 +50,10 @@ class Task extends LaravelBaseModel
     public function mine($id_user = '')
     {
         return $this->id_user_create == $id_user;
+    }
+
+    public function isFinished()
+    {
+        return $this->is_finished == self::FINISHED_STATUS;
     }
 }

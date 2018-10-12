@@ -111,4 +111,9 @@ class User extends  LaravelBaseModel
     {
         return $this->id_user === $other_id_user;
     }
+
+    public function mine($other_id_user = '')
+    {
+        return $this->id_user === $other_id_user;
+    }
 }

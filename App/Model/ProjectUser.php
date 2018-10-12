@@ -56,6 +56,8 @@ class ProjectUser extends LaravelBaseModel
     {
         //异步推送任务ws
         TaskManager::async(function () use ($id_project, $type, $data){
+            echo "push message is calla at".date('Y-m-d H:i').' --type is'. $type . '--id_project is'. $id_project . PHP_EOL;
+
             $fds = Redis::getInstance()->hGetAll(ProjectUser::PROJECTROOM.':'.$id_project);
             if(!empty($fds) && is_array($fds)){
                 foreach($fds as $fd){
