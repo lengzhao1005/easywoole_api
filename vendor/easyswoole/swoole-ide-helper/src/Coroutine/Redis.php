@@ -21,7 +21,6 @@ define('SWOOLE_REDIS_TYPE_HASH', 1);
 
 class Redis extends \Redis
 {
-    public $connected = false;
     public $errCode;
     public $errMsg;
 }
