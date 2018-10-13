@@ -148,7 +148,7 @@ trait Tasks
                 //$task->cost_time = $cost_time;
                 $task->expire_time = $expire_time;
                 $task->save();
-                $type = 'task_new';
+                $type = 'task_modify';//task_modify
             }else{//创建
                 $task = new Task();
                 $task->title = $task_title;
@@ -160,7 +160,7 @@ trait Tasks
                 $task->id_project = $id_project;
                 $task->id_user_create = $this->who->id_user;
                 $task->save();
-                $type = 'task_modify';
+                $type = 'task_new';
             }
 
             //关联用户
