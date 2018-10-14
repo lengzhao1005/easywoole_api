@@ -5,6 +5,7 @@ namespace App\WebSocket;
 use App\Model\Project;
 use App\Model\ProjectUser;
 use App\Model\Task;
+use App\Model\User;
 use App\Utility\FormatResultErrors;
 use EasySwoole\Core\Utility\Validate\Rules;
 use EasySwoole\Core\Utility\Validate\Rule;
@@ -139,7 +140,12 @@ trait Projects
                 $type = 'project_modify';
             }
 
-            $this->pushMsg($project->id_project, $type, $project->toArray());
+            $this->pushMsg($project->id_project, $type, [
+                'id_project' => $project->id_project,
+                'name' => $project->name,
+                'id_user' => $this->who->id_user,
+                'mine' => '',
+            ]);
 
             //返回数据
             return $this->_getResponseData(FormatResultErrors::CODE_MAP['SUCCESS'], ['project' => $project->toArray()]);

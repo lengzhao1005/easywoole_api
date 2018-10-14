@@ -172,7 +172,8 @@ trait Tasks
                 'id_project' => $task->id_project,
                 'content' => $task->content,
                 'name' => $task->title,
-                'mine' => $this->who->mine($task->id_user_create),
+                'id_user' => $this->who->id_user,
+                'mine' => '',
                 'completed' => $task->isFinished(),
                 'priority' => [
                     'type' => $task->emergency_rank,

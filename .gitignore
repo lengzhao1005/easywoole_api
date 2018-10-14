@@ -1,2 +1,5 @@
 /node_modules
 /.idea
+/Config.php
+/Temp
+/Log/*

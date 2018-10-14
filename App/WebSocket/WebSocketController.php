@@ -43,6 +43,7 @@ class WebSocketController extends BaseWebSocketController
     protected $_join_rules = [
         'project_init',
         'tasklist_project_init',
+        'projectlist_init',
     ];
 
     const TYPE_AUTH_FAIL  = 'auth_fail';
@@ -121,6 +122,7 @@ class WebSocketController extends BaseWebSocketController
      */
     protected function _joinRoom()
     {
+        var_dump('is join room --'.$this->request()->getAction());
         if(!in_array($this->request()->getAction(), $this->_join_rules)){
             return ;
         }
@@ -149,29 +151,41 @@ class WebSocketController extends BaseWebSocketController
      * @param string $type
      * @param array $data
      */
-    protected function pushMsg($id_project='', $type='', $data = [])
+    protected function pushMsg($id_project='', $type='', $send_data = [])
     {
         //异步推送任务ws
-        TaskManager::async(function () use ($id_project, $type, $data){
+        TaskManager::async(function () use ($id_project, $type, $send_data){
             echo "push message is calla at".date('Y-m-d H:i').' --type is'. $type . '--id_project is'. $id_project . PHP_EOL;
 
             $fd_tokens = Redis::getInstance()->hGetAll(ProjectUser::PROJECTROOM.':'.$id_project);
+
             if(!empty($fd_tokens) && is_array($fd_tokens)){
                 foreach($fd_tokens as $fd_token){
 
-                    $fd_token_arr = implode('_', $fd_token);
+                    $fd_token_arr = explode('_', $fd_token);
+
                     $fd = $fd_token_arr[0];
                     $auth_token = $fd_token_arr[1];
 
-                    if($id_user = Redis::getInstance()->get($auth_token)){
+                    $id_user = Redis::getInstance()->get($auth_token);
+                    if(!$id_user){
                         $data = [
                             'type' => self::TYPE_AUTH_FAIL,
+                            'code' => '403',
+                            'message' => 'auth fail',
                             $this->_getResponseData(FormatResultErrors::CODE_MAP['TOKEN.INVALID']),
                         ];
                     }else{
+                        if(!empty($send_data['id_user']) && isset($send_data['mine'])){
+                            $send_data['mine'] = ($send_data['id_user'] == $id_user);
+                            unset($send_data['id_user']);
+                        }
+
                         $data = [
                             'type' => $type,
-                            'data' => $data,
+                            'code' => '100',
+                            'message' => 'success',
+                            'data' => $send_data,
                         ];
                     }
 

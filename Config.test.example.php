@@ -48,10 +48,10 @@ return [
     ],
     'database' => [
         'driver'    => 'mysql',
-        'host'      => '127.0.0.1',
-        'database'  => 'test',
-        'username'  => 'marcus',
-        'password'  => 'zjYinZhun@asdhuez#4@(_9',
+        'host'      => '',
+        'database'  => '',
+        'username'  => '',
+        'password'  => '',
         'charset'   => 'utf8',
         'collation' => 'utf8_general_ci',
         'prefix'    => ''
@@ -61,7 +61,7 @@ return [
         'port' => 6379, // 端口
         'serialize' => false, // 是否序列化php变量
         'dbName' => 0, // db名
-        'auth' => 'huikewk', // 密码
+        'auth' => '', // 密码
         'pool' => [
             'min' => 5, // 最小连接数
             'max' => 100 // 最大连接数
