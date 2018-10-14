@@ -48,7 +48,7 @@ return [
     ],
     'database' => [
         'driver'    => 'mysql',
-        'host'      => '127.0.0.1',
+        'host'      => '116.62.147.74',
         'database'  => 'test',
         'username'  => 'marcus',
         'password'  => 'zjYinZhun@asdhuez#4@(_9',

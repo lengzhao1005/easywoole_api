@@ -167,7 +167,7 @@ trait Tasks
             $task->users()->sync($id_users);
 
             //推送异步ws消息
-            \App\Model\ProjectUser::pushMsg($id_project, $type, array(
+            $this->pushMsg($id_project, $type, array(
                 'id_task' => $task->id_task,
                 'id_project' => $task->id_project,
                 'content' => $task->content,

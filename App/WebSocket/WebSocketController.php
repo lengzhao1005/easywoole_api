@@ -11,6 +11,7 @@ namespace App\WebSocket;
 use App\Model\ProjectUser;
 use App\Utility\FormatResultErrors;
 use EasySwoole\Core\Http\Message\Status;
+use EasySwoole\Core\Swoole\ServerManager;
 use EasySwoole\Core\Swoole\Task\TaskManager;
 use EasySwoole\Core\Utility\Validate\Rule;
 use App\Model\Project;
@@ -26,8 +27,25 @@ class WebSocketController extends BaseWebSocketController
     use Users, Projects, Tasks;
 
     protected $_auth_rules = [
-        'token' => ['projectlist_init', 'tasklist_init', 'project_init', 'tasklist_project_init', 'project_modify', 'project_save', 'task_init', 'task_save', 'member_project_fetchall']
+        'token' => [
+            'projectlist_init',
+            'tasklist_init',
+            'project_init',
+            'tasklist_project_init',
+            'project_modify',
+            'project_save',
+            'task_init',
+            'task_save',
+            'member_project_fetchall'
+        ]
     ];
+
+    protected $_join_rules = [
+        'project_init',
+        'tasklist_project_init',
+    ];
+
+    const TYPE_AUTH_FAIL  = 'auth_fail';
 
     public $who;
 
@@ -47,7 +65,7 @@ class WebSocketController extends BaseWebSocketController
         if (empty($format_result) || !is_array($format_result)) {
             $format_result = ['code' => Status::CODE_INTERNAL_SERVER_ERROR, 'message' => 'unknow'];
         }
-
+        var_dump('api is call at '. date('Y-m-d H:i:s') .' --action: '.$this->request()->getAction());
         return \array_merge(['data' => $data], $format_result);
     }
 
@@ -66,13 +84,16 @@ class WebSocketController extends BaseWebSocketController
         }
 
         $auth_token = $this->request()->getArg('auth_token');
-        if(!empty($auth_token) && $id_user = Redis::getInstance()->get($auth_token)){
+        $id_user = Redis::getInstance()->get($auth_token);
+        echo 'auth_token is '.$auth_token. ' --id_user:'.$id_user.PHP_EOL;
+
+        if(!empty($auth_token) && $id_user){
             $user = User::find($id_user);
             if(!empty($user)){
                 $this->who = $user;
                 User::resetTokenExpiredTime($auth_token);
 
-                $this->_room();
+                $this->_joinRoom();
                 return true;
             }
         }
@@ -86,7 +107,7 @@ class WebSocketController extends BaseWebSocketController
     protected function _auth_fail()
     {
         $response_data = $this->_getResponseData(FormatResultErrors::CODE_MAP['TOKEN.INVALID']);
-        $this->_apiResponse($response_data, 'auth_fail');
+        $this->_apiResponse($response_data, self::TYPE_AUTH_FAIL);
     }
 
     protected function _apiResponse($data = array(), $type = '')
@@ -98,19 +119,68 @@ class WebSocketController extends BaseWebSocketController
     /**
      * 房间人员处理
      */
-    protected function _room()
+    protected function _joinRoom()
     {
+        if(!in_array($this->request()->getAction(), $this->_join_rules)){
+            return ;
+        }
+
         $fd = $this->client()->getFd();
+        $auth_token = $this->request()->getArg('auth_token');
         $id_user = $this->who->id_user;
         //异步任务将fd与用户ID绑定
-        TaskManager::async(function () use ($fd, $id_user){
+        TaskManager::async(function () use ($fd, $id_user, $auth_token){
             Redis::getInstance()->set(User::SW_FD_PREFIX.$fd, $id_user);
             //在project房间中中加入用户
             $id_projects = Redis::getInstance()->hGetAll(ProjectUser::USERPROJECTGREP.':'.$id_user);
             if(!empty($id_projects) && is_array($id_projects)){
 
                 foreach($id_projects as $id_project){
-                    Redis::getInstance()->hset(ProjectUser::PROJECTROOM.':'.$id_project, $id_user, $fd);
+                    echo 'join room --id_project:'. $id_project.' --id_user:' .$id_user.PHP_EOL;
+                    Redis::getInstance()->hset(ProjectUser::PROJECTROOM.':'.$id_project, $id_user.'_'.$fd, $fd.'_'.$auth_token);
+                }
+            }
+        });
+    }
+
+    /**
+     * 推送异步websocket
+     * @param string $id_project
+     * @param string $type
+     * @param array $data
+     */
+    protected function pushMsg($id_project='', $type='', $data = [])
+    {
+        //异步推送任务ws
+        TaskManager::async(function () use ($id_project, $type, $data){
+            echo "push message is calla at".date('Y-m-d H:i').' --type is'. $type . '--id_project is'. $id_project . PHP_EOL;
+
+            $fd_tokens = Redis::getInstance()->hGetAll(ProjectUser::PROJECTROOM.':'.$id_project);
+            if(!empty($fd_tokens) && is_array($fd_tokens)){
+                foreach($fd_tokens as $fd_token){
+
+                    $fd_token_arr = implode('_', $fd_token);
+                    $fd = $fd_token_arr[0];
+                    $auth_token = $fd_token_arr[1];
+
+                    if($id_user = Redis::getInstance()->get($auth_token)){
+                        $data = [
+                            'type' => self::TYPE_AUTH_FAIL,
+                            $this->_getResponseData(FormatResultErrors::CODE_MAP['TOKEN.INVALID']),
+                        ];
+                    }else{
+                        $data = [
+                            'type' => $type,
+                            'data' => $data,
+                        ];
+                    }
+
+                    $info = ServerManager::getInstance()->getServer()->connection_info($fd);
+                    if(is_array($info)){
+                        ServerManager::getInstance()->getServer()->push($fd, \json_encode($data));
+                    }else{
+                        echo "fd {$fd} not exist";
+                    }
                 }
             }
         });
@@ -121,11 +191,8 @@ class WebSocketController extends BaseWebSocketController
      */
     public function user_register()
     {
-        var_dump($this->request()->getAction());
         $request_data = $this->request()->getArg('content');
-        var_dump($request_data);
         $response_data = $this->register($request_data);
-        var_dump($response_data);
         $this->_apiResponse($response_data);
     }
 
@@ -135,12 +202,9 @@ class WebSocketController extends BaseWebSocketController
     public function user_login()
     {
         $request_data = $this->request()->getArg('content');
-        var_dump($request_data);
         $fd = $this->client()->getFd();
-        var_dump($fd);
 
         $response_data = $this->login($request_data, $fd);
-        var_dump($response_data);
         $this->_apiResponse($response_data);
     }
 
@@ -157,7 +221,6 @@ class WebSocketController extends BaseWebSocketController
             })->toArray();
 
             $response_data = $this->_getResponseData(FormatResultErrors::CODE_MAP['SUCCESS'], ['projects' => $projects]);
-            var_dump($response_data);
             $this->_apiResponse($response_data);
 
         }else{
@@ -235,9 +298,7 @@ class WebSocketController extends BaseWebSocketController
         if($this->_beforeAction()){
 
             $request_data = $this->request()->getArg('content');
-            var_dump($request_data);
             $response_data = $this->saveProject($request_data);
-            var_dump($response_data);
             $this->_apiResponse($response_data);
         }else{
             $this->_auth_fail();
@@ -249,16 +310,13 @@ class WebSocketController extends BaseWebSocketController
      */
     public function task_init()
     {
-        if($this->_beforeAction()){
-
-            $request_data = $this->request()->getArg('content');
-            var_dump($request_data);
-            $response_data = $this->showTask($request_data);
-            var_dump($response_data);
-            $this->_apiResponse($response_data);
-        }else{
-            $this->_auth_fail();
+        if(!$this->_beforeAction()){
+            return $this->_auth_fail();
         }
+
+        $request_data = $this->request()->getArg('content');
+        $response_data = $this->showTask($request_data);
+        return $this->_apiResponse($response_data);
     }
 
     /**
@@ -267,11 +325,8 @@ class WebSocketController extends BaseWebSocketController
     public function task_save()
     {
         if($this->_beforeAction()){
-
             $request_data = $this->request()->getArg('content');
-            var_dump($request_data);
             $response_data = $this->saveTask($request_data);
-            var_dump($response_data);
             $this->_apiResponse($response_data);
         }else{
             $this->_auth_fail();
@@ -283,9 +338,7 @@ class WebSocketController extends BaseWebSocketController
         if($this->_beforeAction()){
 
             $request_data = $this->request()->getArg('content');
-            var_dump($request_data);
             $response_data = $this->getUsersByIdProject($request_data);
-            var_dump($response_data);
             $this->_apiResponse($response_data);
         }else{
             $this->_auth_fail();

@@ -62,17 +62,29 @@ class ProjectUser extends LaravelBaseModel
         TaskManager::async(function () use ($id_project, $type, $data){
             echo "push message is calla at".date('Y-m-d H:i').' --type is'. $type . '--id_project is'. $id_project . PHP_EOL;
 
-            $fds = Redis::getInstance()->hGetAll(ProjectUser::PROJECTROOM.':'.$id_project);
-            var_dump($fds);
-            if(!empty($fds) && is_array($fds)){
-                foreach($fds as $fd){
-                    $info = ServerManager::getInstance()->getServer()->connection_info($fd);
-                    var_dump(is_array($info));
-                    if(is_array($info)){
-                        ServerManager::getInstance()->getServer()->push($fd, \json_encode([
+            $fd_tokens = Redis::getInstance()->hGetAll(ProjectUser::PROJECTROOM.':'.$id_project);
+            if(!empty($fd_tokens) && is_array($fd_tokens)){
+                foreach($fd_tokens as $fd_token){
+
+                    $fd_token_arr = implode('_', $fd_token);
+                    $fd = $fd_token_arr[0];
+                    $auth_token = $fd_token_arr[1];
+
+                    if($id_user = Redis::getInstance()->get($auth_token)){
+                        $data = [
+                            'type' => 'auth_fail',
+                            'data' => '',
+                        ];
+                    }else{
+                        $data = [
                             'type' => $type,
                             'data' => $data,
-                        ]));
+                        ];
+                    }
+
+                    $info = ServerManager::getInstance()->getServer()->connection_info($fd);
+                    if(is_array($info)){
+                        ServerManager::getInstance()->getServer()->push($fd, \json_encode($data));
                     }else{
                         echo "fd {$fd} not exist";
                     }

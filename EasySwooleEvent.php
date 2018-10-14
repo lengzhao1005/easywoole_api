@@ -43,7 +43,8 @@ Class EasySwooleEvent implements EventInterface {
                 $id_projects = Redis::getInstance()->hGetAll(ProjectUser::USERPROJECTGREP.':'.$id_user);
                 if(!empty($id_projects) && is_array($id_projects)){
                     foreach($id_projects as $id_project){
-                        Redis::getInstance()->hDel(ProjectUser::PROJECTROOM.':'.$id_project, $id_user);
+                        echo 'out room --id_project:'. $id_project.' --id_user:' .$id_user.PHP_EOL;
+                        Redis::getInstance()->hDel(ProjectUser::PROJECTROOM.':'.$id_project, $id_user.'_'.$fd);
                     }
                 }
             }

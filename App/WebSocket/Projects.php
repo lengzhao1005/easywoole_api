@@ -139,10 +139,7 @@ trait Projects
                 $type = 'project_modify';
             }
 
-            ProjectUser::pushMsg($project->id_project, $type, [
-                'project' => $project->toArray()
-            ]);
-
+            $this->pushMsg($project->id_project, $type, $project->toArray());
 
             //返回数据
             return $this->_getResponseData(FormatResultErrors::CODE_MAP['SUCCESS'], ['project' => $project->toArray()]);
